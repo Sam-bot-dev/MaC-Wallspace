@@ -73,12 +73,54 @@ public final class MenuBarController: NSObject, NSMenuDelegate {
         menu.addItem(playPauseItem)
         
         let nextItem = NSMenuItem(
-            title: "Next Wallpaper",
+            title: "Next Wallpaper in Playlist",
             action: #selector(nextWallpaper),
             keyEquivalent: "n"
         )
         nextItem.target = self
         menu.addItem(nextItem)
+        
+        let prevItem = NSMenuItem(
+            title: "Previous Wallpaper in Playlist",
+            action: #selector(previousWallpaper),
+            keyEquivalent: "N"
+        )
+        prevItem.target = self
+        menu.addItem(prevItem)
+        
+        // Playlist Submenu
+        let playlistMenu = NSMenu()
+        let activePlaylist = PlaylistManager.shared.activePlaylist
+        let activeName = activePlaylist?.name ?? "My Live Wallpapers"
+        let playlistMenuItem = NSMenuItem(title: "Playlist: \(activeName)", action: nil, keyEquivalent: "")
+        
+        for playlist in PlaylistManager.shared.playlists {
+            let item = NSMenuItem(
+                title: "\(playlist.name) (\(playlist.itemIds.count))",
+                action: #selector(switchPlaylist(_:)),
+                keyEquivalent: ""
+            )
+            item.representedObject = playlist.id
+            item.target = self
+            if playlist.id == PlaylistManager.shared.activePlaylistId {
+                item.state = .on
+            }
+            playlistMenu.addItem(item)
+        }
+        
+        playlistMenu.addItem(NSMenuItem.separator())
+        if let current = activePlaylist, current.cycleIntervalMinutes > 0 {
+            let cycleInfo = NSMenuItem(title: "Auto-Cycle: Every \(current.cycleIntervalMinutes) min", action: nil, keyEquivalent: "")
+            cycleInfo.isEnabled = false
+            playlistMenu.addItem(cycleInfo)
+        }
+        
+        let manageItem = NSMenuItem(title: "Manage Playlists in Gallery...", action: #selector(openPlaylists), keyEquivalent: "")
+        manageItem.target = self
+        playlistMenu.addItem(manageItem)
+        
+        playlistMenuItem.submenu = playlistMenu
+        menu.addItem(playlistMenuItem)
         
         // Reset to Default Wallpaper
         let defaultItem = NSMenuItem(
@@ -103,6 +145,16 @@ public final class MenuBarController: NSObject, NSMenuDelegate {
         let muteItem = NSMenuItem(title: muteTitle, action: #selector(toggleMute), keyEquivalent: "m")
         muteItem.target = self
         menu.addItem(muteItem)
+        
+        // 3D Coverflow Switcher
+        let switcherItem = NSMenuItem(
+            title: "3D Wallpaper Switcher (Coverflow)...",
+            action: #selector(openCoverflowSwitcher),
+            keyEquivalent: "w"
+        )
+        switcherItem.keyEquivalentModifierMask = [.command, .shift]
+        switcherItem.target = self
+        menu.addItem(switcherItem)
         
         menu.addItem(NSMenuItem.separator())
         
@@ -162,6 +214,25 @@ public final class MenuBarController: NSObject, NSMenuDelegate {
     
     @objc private func nextWallpaper() {
         DesktopWindowManager.shared.cycleNextWallpaper()
+    }
+    
+    @objc private func previousWallpaper() {
+        DesktopWindowManager.shared.cyclePreviousWallpaper()
+    }
+    
+    @objc private func switchPlaylist(_ sender: NSMenuItem) {
+        if let playlistId = sender.representedObject as? UUID {
+            PlaylistManager.shared.activePlaylistId = playlistId
+            PlaylistManager.shared.cycleNext()
+        }
+    }
+    
+    @objc private func openPlaylists() {
+        GalleryWindowController.shared.show()
+    }
+    
+    @objc private func openCoverflowSwitcher() {
+        CoverflowWindowController.shared.show()
     }
     
     @objc private func resetToDefault() {

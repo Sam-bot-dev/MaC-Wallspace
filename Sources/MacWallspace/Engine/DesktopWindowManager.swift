@@ -160,16 +160,11 @@ public final class DesktopWindowManager: ObservableObject {
     }
     
     public func cycleNextWallpaper() {
-        let downloaded = WallpaperStore.shared.wallpapers.filter { $0.isDownloaded }
-        guard downloaded.count > 1 else { return }
-        
-        if let current = WallpaperStore.shared.activeWallpaper,
-           let currentIndex = downloaded.firstIndex(where: { $0.id == current.id }) {
-            let nextIndex = (currentIndex + 1) % downloaded.count
-            WallpaperStore.shared.setActiveWallpaper(downloaded[nextIndex])
-        } else if let first = downloaded.first {
-            WallpaperStore.shared.setActiveWallpaper(first)
-        }
+        PlaylistManager.shared.cycleNext()
+    }
+    
+    public func cyclePreviousWallpaper() {
+        PlaylistManager.shared.cyclePrevious()
     }
     
     // MARK: - Revert / Show Native macOS Desktop

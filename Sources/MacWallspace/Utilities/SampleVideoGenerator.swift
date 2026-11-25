@@ -5,8 +5,6 @@ import Cocoa
 
 public final class SampleVideoGenerator {
     public static func ensureDefaultOfflineWallpapersExist() {
-        let store = WallpaperStore.shared
-        
         // 1. Anime Twilight & Drifting Sakura (60 FPS)
         let animeName = "builtin_anime_sakura_60fps.mp4"
         let animeURL = WallpaperStore.wallpapersDirectory.appendingPathComponent(animeName)

@@ -3,6 +3,7 @@
 [![macOS: 11.0+](https://img.shields.io/badge/macOS-11.0%2B%20(Big%20Sur%20%E2%86%92%20Sequoia)-000000.svg?logo=apple&logoColor=white)](https://github.com/Sam-bot-dev/MaC-Wallspace)
 [![Architecture: Universal](https://img.shields.io/badge/Architecture-Intel%20x86__64%20%7C%20Apple%20Silicon-blue.svg)](https://github.com/Sam-bot-dev/MaC-Wallspace)
 [![Hardware Acceleration](https://img.shields.io/badge/VideoToolbox-Hardware%20H.264%2FHEVC-10b981.svg)](https://github.com/Sam-bot-dev/MaC-Wallspace)
+[![Battery Impact](https://img.shields.io/badge/Battery%20Drain-Zero%20(Auto--Pause%20on%20Battery)-brightgreen.svg)](#7-intelligent-battery--thermal-governors)
 [![RAM Footprint](https://img.shields.io/badge/RAM-~25MB%20(vs%20500MB%2B%20Electron)-brightgreen.svg)](#-5-performance-benchmarks-mac-wallspace-vs-alternatives)
 [![CPU Usage](https://img.shields.io/badge/CPU-%3C1.5%25%20Idle%20Decode-blueviolet.svg)](#-5-performance-benchmarks-mac-wallspace-vs-alternatives)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
@@ -18,13 +19,14 @@
 2. [What MaC-Wallspace Does](#2-what-mac-wallspace-does)
 3. [Architecture & Engine Workflow](#3-architecture--engine-workflow)
 4. [Adding Your Own Live Wallpapers](#4-adding-your-own-live-wallpapers)
-5. [Pre-Installed & Provided Live Wallpapers](#5-pre-installed--provided-live-wallpapers)
-6. [Performance Benchmarks: MaC-Wallspace vs. Alternatives](#6-performance-benchmarks-mac-wallspace-vs-alternatives)
-7. [Intelligent Battery & Thermal Governors](#7-intelligent-battery--thermal-governors)
-8. [Installation & Quick Start](#8-installation--quick-start)
-9. [Menu Bar Controls & Shortcuts](#9-menu-bar-controls--shortcuts)
-10. [Repository Structure](#10-repository-structure)
-11. [License](#11-license)
+5. [Dynamic Playlists & Auto-Cycling](#5-dynamic-playlists--auto-cycling)
+6. [Pre-Installed & Provided Live Wallpapers](#6-pre-installed--provided-live-wallpapers)
+7. [Performance Benchmarks: MaC-Wallspace vs. Alternatives](#7-performance-benchmarks-mac-wallspace-vs-alternatives)
+8. [Intelligent Battery & Thermal Governors](#8-intelligent-battery--thermal-governors-zero-battery-drain)
+9. [Installation & Quick Start](#9-installation--quick-start)
+10. [Menu Bar Controls & Shortcuts](#10-menu-bar-controls--shortcuts)
+11. [Repository Structure](#11-repository-structure)
+12. [License](#12-license)
 
 ---
 
@@ -50,6 +52,8 @@ Millions of Macs running macOS Big Sur (11), Monterey (12), and Ventura (13) —
 
 - 🪶 **Under 1 MB Distribution Size**: Complete installer `.dmg` is only ~540 KB.
 - ⚡ **Direct Hardware Decoding**: VideoToolbox H.264/HEVC hardware acceleration draws < 1.5% CPU.
+- 🗂️ **3D Coverflow HUD Switcher**: Press `Cmd + Shift + W` or click "3D Switcher" to browse wallpapers in an interactive 3D perspective carousel with arrow keys (`←` / `→`) and `Enter` (↵) to apply immediately.
+- 🎨 **Omarchy Wallpapers & Theme Playlists**: Bundles curated live and static wallpapers from [**Omarchy** (`dharmx/walls`)](https://github.com/dharmx/walls), cleanly split into theme playlists (*Animated Live, Anime, Outrun, Nord, Gruvbox, Nature, Minimal*).
 - 🖱️ **Zero Interference with Desktop**: Sets `ignoresMouseEvents = true` behind `kCGDesktopWindowLevel`, preserving 100% of Finder desktop icon clicks, folder operations, and drag selections.
 - 🔋 **Smart Battery Governor**: Automatically halts video playback when unplugged or below 20% battery.
 - 🎮 **Fullscreen App & Game Detection**: Instantly pauses decoding when games, browsers, or code editors enter fullscreen mode, releasing 100% GPU/CPU power to your active tasks.
@@ -135,24 +139,41 @@ Or run the standalone importer:
 
 ---
 
-## 5. Pre-Installed & Provided Live Wallpapers
+## 5. Dynamic Playlists & Auto-Cycling
 
-MaC-Wallspace comes with high-definition, looping live wallpapers ready out-of-the-box with **zero internet connection required**:
+MaC-Wallspace includes a built-in playlist engine that lets you organize and cycle through your live wallpapers seamlessly:
 
-| Wallpaper Title | Category | Resolution | Description |
-| :--- | :--- | :--- | :--- |
-| **Aurora Shifting Waves** | Minimalist | 1080p Native | Smooth, organic shifting gradient waves with calming fluid color transitions. |
-| **Cosmic Deep Space Warp** | Sci-Fi | 1080p Native | High-speed multi-layered starfield parallax drift through deep cosmic space. |
-| **Cosmic Nebula Flow** | Sci-Fi | 1080p Optimized | High-dynamic range interstellar dust clouds in motion. |
-| **Misty Alpine Forest** | Nature | 1080p Low-Power | Ambient forest canopy with rolling mountain fog. |
-| **Tokyo Cyberpunk Rain** | Sci-Fi | 1080p Vibrant | Atmospheric neon city skyline during a soft rain shower. |
-| **Earth Orbit Horizon** | Aerial | 4K Accelerated | Panoramic orbital satellite view of Earth's sunrise horizon. |
-| **Lo-Fi Rainy Window** | Anime & Cozy | 1080p Quiet | Cozy raindrop condensation against an evening cityscape. |
-| **Minimalist Waves** | Minimalist | 1080p Fluid | Clean geometric monochrome waves for distraction-free focus. |
+- 📥 **Automatic Playlist Ingestion**: Whenever you import or add a new live wallpaper (MP4, MOV, or animated loop), it is **automatically added** to your *"My Live Wallpapers"* playlist.
+- 🗂️ **Custom Playlists**: Create specialized playlists (e.g. *Anime Vibes*, *Cyberpunk Night*, *Ambient Nature*, *Study Chill*).
+- 🔄 **Auto-Cycling Intervals**: Automatically transition to the next wallpaper in your playlist every **5 minutes**, **15 minutes**, **30 minutes**, or **1 hour**.
+- 🔀 **Smart Shuffle**: Randomize your wallpaper loop to keep your Mac desktop feeling fresh throughout the day.
+- ⌨️ **Instant Cycling Shortcuts**:
+  - `Cmd + N` — Switch immediately to the **Next** wallpaper in your active playlist.
+  - `Cmd + Shift + N` — Switch back to the **Previous** wallpaper.
+- 🔋 **Battery-Aware Cycling**: The auto-cycling timer respects power management — if your Mac is running on battery or in display sleep, background timer wakeups are halted to prevent battery drain.
 
 ---
 
-## 6. Performance Benchmarks: MaC-Wallspace vs. Alternatives
+## 6. Pre-Installed & Omarchy Wallpapers with Live Previews
+
+MaC-Wallspace includes curated high-definition 4K & 1080p live loops and Retina static wallpapers out-of-the-box, with full attribution to [**Omarchy** (`dharmx/walls`)](https://github.com/dharmx/walls):
+
+| Wallpaper Title | Theme / Style | Resolution & Format | Preview |
+| :--- | :--- | :--- | :---: |
+| **Totoro Starry Night** | Studio Ghibli / Anime | 4K UHD 60 FPS Video Loop | <img src="docs/previews/preview_totoro.jpg" width="260" alt="Totoro Starry Night"> |
+| **Bocchi The Rock (Train)** | Anime & Cozy | 4K UHD 24 FPS Video Loop | <img src="docs/previews/preview_bocchi.jpg" width="260" alt="Bocchi The Rock"> |
+| **Outrun Sunset Skyline** | Synthwave / Retro City | 4.6K Ultra-HD Retina Photo | <img src="docs/previews/preview_outrun_sunset.jpg" width="260" alt="Outrun Sunset"> |
+| **Sakura Katana Blade** | Anime & Action | 4K UHD 60 FPS Video Loop | <img src="docs/previews/preview_sakura_blade.jpg" width="260" alt="Sakura Blade"> |
+| **Berserk Manga Eclipse** | Dark Anime / Manga | 1080p 60 FPS Video Loop | <img src="docs/previews/preview_berserk.jpg" width="260" alt="Berserk Eclipse"> |
+| **Celestial Light Veil** | Monochrome Chiaroscuro | 1080p 60 FPS Video Loop | <img src="docs/previews/preview_celestial_veil.jpg" width="260" alt="Celestial Veil"> |
+| **Sailor Moon Window** | Retro 90s Aesthetic | 1080p Animated Loop | <img src="docs/previews/preview_sailor_moon.jpg" width="260" alt="Sailor Moon Window"> |
+| **Monochrome Ocean Waves** | Minimalist Nature | Retina Ultra-HD Photo | <img src="docs/previews/preview_waves_monochrome.jpg" width="260" alt="Monochrome Waves"> |
+| **Spy x Family (Yor Forger)** | Anime Action | 1080p 60 FPS Video Loop | <img src="docs/previews/preview_yor_forger.jpg" width="260" alt="Yor Forger"> |
+| **Darling in the Franxx (Zero Two)** | Anime Dynamic | 1080p 60 FPS Video Loop | <img src="docs/previews/preview_zero_two.jpg" width="260" alt="Zero Two"> |
+
+---
+
+## 7. Performance Benchmarks: MaC-Wallspace vs. Alternatives
 
 *Tested on a 13-inch MacBook Pro (Intel Core i5, 8GB RAM, macOS 13.7.8 Ventura):*
 
@@ -168,19 +189,50 @@ MaC-Wallspace comes with high-definition, looping live wallpapers ready out-of-t
 
 ---
 
-## 7. Intelligent Battery & Thermal Governors
+## 8. Intelligent Battery & Thermal Governors (Zero Battery Drain)
 
-MaC-Wallspace includes an autonomous power manager tailored specifically to preserve older laptop batteries:
+One of the biggest flaws with third-party wallpaper engines (especially Chromium/Electron-based apps) is that they devour battery life, causing older MacBooks to run hot, spin fans loudly, and drain completely in under 90 minutes.
 
-- 🔋 **Battery Disconnect Pause**: Automatically halts video decoding the moment your Mac is unplugged from its charger.
-- 🪫 **Emergency Low Battery Cap**: Emergency pause if battery falls below 20%, ensuring critical work is never interrupted.
-- 🎯 **Target Frame Rate Limiter**: Choose between **24 FPS** (Ultra Battery Saver), **30 FPS** (Recommended for Intel Macs), or **60 FPS** (Silky Smooth).
-- 🎮 **Fullscreen Occlusion Sensor**: Uses `CGWindowListCopyWindowInfo` to detect when any app (YouTube, Xcode, games, VLC) is fullscreen and pauses decoding to release 100% of your GPU.
-- 💤 **Display Sleep & Lock Monitor**: Instantly freezes decoding during display sleep, lid close, or screen lock.
+**MaC-Wallspace is engineered from the ground up for zero unneeded battery draw:**
+
+```
+      Power Status Change (MagSafe / USB-C Disconnected)
+                             │
+                             ▼
+         IOPSNotificationCreateRunLoopSource (0ms event)
+                             │
+                             ▼
+            PowerGovernor.evaluatePowerState()
+                             │
+            ┌────────────────┴────────────────┐
+            ▼                                 ▼
+   [On Battery: Default]             [Plugged in: AC Adapter]
+   • AVQueuePlayer.pause()           • AVQueuePlayer.play()
+   • VideoToolbox decode halted      • VideoToolbox HW Decode (<1.5% CPU)
+   • 0.0% CPU / 0.0W GPU             • 60 FPS Smooth Looping
+   • Freezes on crisp frame
+```
+
+### Key Battery & Power Protections:
+
+1. 🔋 **Instant Hardware Disconnect Detection (`IOPSNotificationCreateRunLoopSource`)**:  
+   Rather than polling in a loop, MaC-Wallspace hooks directly into macOS IOKit hardware power events. The exact microsecond you unplug your MacBook from its charger, the video engine pauses and stops drawing power.
+2. 🪫 **0.0% CPU When Paused or Using Photos**:  
+   When playback is paused (or when using static photo wallpapers), video decoding is completely halted. The app uses **0.0% CPU** and **0 MB/s disk I/O**, leaving the CPU cores in their deepest sleep states (C-states).
+3. 🛑 **Emergency Low Battery Cap (≤ 20%)**:  
+   If you choose to run live wallpapers on battery, the governor enforces an automatic safety freeze when battery falls to 20% (configurable), ensuring your Mac never dies unexpectedly during important work.
+4. 🎮 **Instant Fullscreen & Space Occlusion Detection**:  
+   Listens to `NSWorkspace.didActivateApplicationNotification` and `activeSpaceDidChangeNotification`. The moment you switch to a fullscreen browser, YouTube video, IDE, or game, wallpaper decoding pauses instantly to surrender 100% of your GPU and battery to the foreground app.
+5. 💤 **Display Sleep & Screen Lock Instant Freeze**:  
+   Listens to `screensDidSleepNotification` and `willSleepNotification`. Freezes rendering instantly when the display turns off or the MacBook lid is closed.
+6. ⚡ **Dedicated Hardware ASIC Decoding**:  
+   Video frames are decoded directly on Apple Silicon Media Engines or Intel QuickSync hardware ASICs via `VideoToolbox`. No software CPU rendering or shader emulation is ever used.
+7. 🎯 **Customizable Target Frame Rates**:  
+   Choose between **24 FPS (Ultra-Battery Saver)**, **30 FPS (Recommended for Older Intel Macs)**, or **60 FPS (Silky Smooth)** in the Performance tab to match your battery priorities.
 
 ---
 
-## 8. Installation & Quick Start
+## 9. Installation & Quick Start
 
 ### Download Pre-Built Releases
 1. Download the latest release `.dmg` from the [**Releases Page**](https://github.com/Sam-bot-dev/MaC-Wallspace/releases).
@@ -208,20 +260,22 @@ make run
 
 ---
 
-## 9. Menu Bar Controls & Shortcuts
+## 10. Menu Bar Controls & Shortcuts
 
 Click the **MaC-Wallspace** icon (`photo.artframe`) in the top macOS status bar for instant access:
 
 - `Cmd + P` — ⏯ **Pause / Resume** Live Wallpaper
-- `Cmd + N` — ⏭ **Next Wallpaper** (cycles through downloaded & custom library)
+- `Cmd + N` — ⏭ **Next Wallpaper in Playlist**
+- `Cmd + Shift + N` — ⏮ **Previous Wallpaper in Playlist**
+- 🗂 **Playlists Submenu** — Quick one-click switching between active playlists
 - `Cmd + M` — 🔇 **Mute / Unmute** Audio
-- `Cmd + ,` — 🖼 **Open Gallery & Settings Window**
-- `Cmd + I` — 📂 **Import Custom Video...**
+- `Cmd + ,` — 🖼 **Open Gallery, Playlists & Settings Window**
+- `Cmd + I` — 📂 **Import Custom Video or Photo...**
 - `Cmd + Q` — 🚪 **Quit MaC-Wallspace**
 
 ---
 
-## 10. Repository Structure
+## 11. Repository Structure
 
 ```
 MaC-Wallspace/
@@ -272,6 +326,6 @@ MaC-Wallspace/
 
 ---
 
-## 11. License
+## 12. License
 
 Distributed under the **MIT License**. Created with ❤️ for Mac users everywhere.

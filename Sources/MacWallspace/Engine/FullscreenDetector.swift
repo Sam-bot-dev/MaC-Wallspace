@@ -7,7 +7,20 @@ public final class FullscreenDetector {
     private var isFullscreenActive: Bool = false
     
     private init() {
+        setupObservers()
         startMonitoring()
+    }
+    
+    private func setupObservers() {
+        let ws = NSWorkspace.shared.notificationCenter
+        ws.addObserver(self, selector: #selector(handleAppOrSpaceChange), name: NSWorkspace.didActivateApplicationNotification, object: nil)
+        ws.addObserver(self, selector: #selector(handleAppOrSpaceChange), name: NSWorkspace.activeSpaceDidChangeNotification, object: nil)
+    }
+    
+    @objc private func handleAppOrSpaceChange() {
+        DispatchQueue.global(qos: .utility).async { [weak self] in
+            self?.checkFullscreenState()
+        }
     }
     
     public func startMonitoring() {

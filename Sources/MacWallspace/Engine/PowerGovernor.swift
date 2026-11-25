@@ -7,14 +7,30 @@ public final class PowerGovernor {
     private var timer: Timer?
     private var isSystemSleeping: Bool = false
     private var isDisplaySleeping: Bool = false
+    private var powerRunLoopSource: CFRunLoopSource?
     
     public private(set) var isOnBattery: Bool = false
     public private(set) var batteryPercentage: Int = 100
     
     private init() {
         setupSleepObservers()
+        setupIOPSNotification()
         updatePowerState()
         startPeriodicCheck()
+    }
+    
+    private func setupIOPSNotification() {
+        // Register for immediate hardware power source change notifications (charger plugged/unplugged)
+        let source = IOPSNotificationCreateRunLoopSource({ _ in
+            DispatchQueue.main.async {
+                PowerGovernor.shared.evaluatePowerState()
+            }
+        }, nil)?.takeRetainedValue()
+        
+        if let source = source {
+            self.powerRunLoopSource = source
+            CFRunLoopAddSource(CFRunLoopGetMain(), source, CFRunLoopMode.defaultMode)
+        }
     }
     
     private func setupSleepObservers() {

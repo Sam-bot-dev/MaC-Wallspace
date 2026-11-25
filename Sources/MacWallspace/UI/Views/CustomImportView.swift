@@ -105,7 +105,7 @@ public struct CustomImportView: View {
     
     private func importMedia(from url: URL) {
         if let item = store.importCustomMedia(from: url) {
-            statusMessage = "✓ Successfully imported & applied '\(item.title)'!"
+            statusMessage = "✓ Imported & applied '\(item.title)' — Added to your Live Wallpaper Playlist!"
         } else {
             statusMessage = "Failed to import file. Please check format."
         }

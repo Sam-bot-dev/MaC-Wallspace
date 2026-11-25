@@ -154,7 +154,7 @@ public final class WallpaperStore: ObservableObject {
             Self.generateThumbnail(for: targetURL, destination: thumbURL)
             
             var detectedRes = isImage ? "Photo (Retina)" : "Video (Custom)"
-            var category = isImage ? "Photos" : "Custom"
+            let category = isImage ? "Photos" : "Custom"
             
             if isImage {
                 if let image = NSImage(contentsOf: targetURL) {
@@ -188,6 +188,9 @@ public final class WallpaperStore: ObservableObject {
             
             wallpapers.insert(item, at: 0)
             saveCatalog()
+            
+            // Automatically add newly imported live wallpaper to user's playlist
+            PlaylistManager.shared.registerNewlyAddedWallpaper(id: item.id)
             
             // Immediately activate on desktop
             setActiveWallpaper(item)

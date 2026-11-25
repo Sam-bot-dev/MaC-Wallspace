@@ -3,6 +3,7 @@ import SwiftUI
 public enum MainTab: String, CaseIterable, Identifiable {
     case gallery = "Gallery"
     case library = "My Library"
+    case playlists = "Playlists"
     case custom = "Import Media"
     case displays = "Displays"
     case performance = "Performance"
@@ -14,6 +15,7 @@ public enum MainTab: String, CaseIterable, Identifiable {
         switch self {
         case .gallery: return "sparkles.rectangle.stack"
         case .library: return "square.grid.2x2"
+        case .playlists: return "rectangle.stack.badge.play"
         case .custom: return "plus.circle"
         case .displays: return "display"
         case .performance: return "bolt.batteryblock"
@@ -165,6 +167,18 @@ public struct MainGalleryView: View {
                 }
             }
             .buttonStyle(SecondaryButtonStyle())
+            
+            // 3D Coverflow Switcher Button
+            Button(action: {
+                CoverflowWindowController.shared.show()
+            }) {
+                HStack(spacing: 4) {
+                    Image(systemName: "photo.stack.fill")
+                    Text("3D Switcher")
+                }
+            }
+            .buttonStyle(ProminentButtonStyle())
+            .help("Launch 3D Coverflow Wallpaper Switcher (Arrow keys to browse, Enter to apply)")
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 14)
@@ -177,6 +191,8 @@ public struct MainGalleryView: View {
             gallerySection
         case .library:
             librarySection
+        case .playlists:
+            PlaylistView()
         case .custom:
             CustomImportView()
                 .padding(20)

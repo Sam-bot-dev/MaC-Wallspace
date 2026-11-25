@@ -40,9 +40,22 @@ public struct WallpaperCardView: View {
     public let item: WallpaperItem
     @ObservedObject var store = WallpaperStore.shared
     @ObservedObject var downloader = WallpaperDownloader.shared
+    @ObservedObject var playlistManager = PlaylistManager.shared
+    
+    public init(item: WallpaperItem) {
+        self.item = item
+    }
+    
+    public init(wallpaper: WallpaperItem) {
+        self.item = wallpaper
+    }
     
     public var isActive: Bool {
         store.activeWallpaper?.id == item.id
+    }
+    
+    public var isInActivePlaylist: Bool {
+        playlistManager.activePlaylist?.itemIds.contains(item.id) ?? false
     }
     
     public var isDownloading: Bool {
@@ -151,6 +164,17 @@ public struct WallpaperCardView: View {
                     }
                     .buttonStyle(ProminentButtonStyle(backgroundColor: isActive ? Color.green : Color.accentColor))
                     .disabled(isActive)
+                    
+                    Button(action: {
+                        if let activeId = playlistManager.activePlaylistId {
+                            playlistManager.toggleItem(item.id, in: activeId)
+                        }
+                    }) {
+                        Image(systemName: isInActivePlaylist ? "text.badge.checkmark" : "text.badge.plus")
+                            .foregroundColor(isInActivePlaylist ? .accentColor : .secondary)
+                    }
+                    .buttonStyle(SecondaryButtonStyle())
+                    .help(isInActivePlaylist ? "In active playlist (click to remove)" : "Add to active playlist")
                     
                     if item.isCustom || item.localFileName != nil {
                         Button(action: {
