@@ -33,10 +33,28 @@ public final class PlaylistManager: ObservableObject {
     
     // MARK: - Persistence
     
+    private static var resilientDecoder: JSONDecoder {
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .custom { d in
+            let container = try d.singleValueContainer()
+            if let doubleVal = try? container.decode(Double.self) {
+                return Date(timeIntervalSinceReferenceDate: doubleVal)
+            }
+            if let strVal = try? container.decode(String.self) {
+                let iso = ISO8601DateFormatter()
+                if let date = iso.date(from: strVal) {
+                    return date
+                }
+            }
+            return Date()
+        }
+        return decoder
+    }
+    
     public func loadPlaylists() {
         guard FileManager.default.fileExists(atPath: fileURL.path),
               let data = try? Data(contentsOf: fileURL),
-              let items = try? JSONDecoder().decode([Playlist].self, from: data) else {
+              let items = try? Self.resilientDecoder.decode([Playlist].self, from: data) else {
             return
         }
         self.playlists = items

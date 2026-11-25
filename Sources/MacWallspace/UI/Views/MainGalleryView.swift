@@ -211,7 +211,7 @@ public struct MainGalleryView: View {
             // Category Filter Bar
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 8) {
-                    ForEach(CuratedCatalog.categories, id: \.self) { cat in
+                    ForEach(availableCategories, id: \.self) { cat in
                         Button(action: {
                             settings.selectedCategory = cat
                         }) {
@@ -272,9 +272,20 @@ public struct MainGalleryView: View {
         }
     }
     
+    private var availableCategories: [String] {
+        var base = ["All", "Omarchy", "Animated (Live)", "Anime", "Outrun", "Nord", "Gruvbox", "Nature", "Minimal", "Photos", "Custom"]
+        let actual = Set(store.wallpapers.map { $0.category })
+        for c in actual where !base.contains(c) {
+            base.append(c)
+        }
+        return base
+    }
+    
     private var filteredWallpapers: [WallpaperItem] {
         if settings.selectedCategory == "All" {
             return store.wallpapers
+        } else if settings.selectedCategory == "Omarchy" {
+            return store.wallpapers.filter { $0.author?.contains("Omarchy") == true || $0.localFileName?.contains("omarchy") == true }
         } else {
             return store.wallpapers.filter { $0.category == settings.selectedCategory }
         }

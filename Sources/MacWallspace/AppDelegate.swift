@@ -18,12 +18,13 @@ public final class AppDelegate: NSObject, NSApplicationDelegate {
         _ = PowerGovernor.shared
         _ = FullscreenDetector.shared
         
-        // Show gallery window on first launch
-        let hasLaunchedBefore = UserDefaults.standard.bool(forKey: "mac_wallspace_has_launched")
-        if !hasLaunchedBefore {
-            UserDefaults.standard.set(true, forKey: "mac_wallspace_has_launched")
-            GalleryWindowController.shared.show()
-        }
+        // Always show gallery window on launch
+        GalleryWindowController.shared.show()
+    }
+    
+    public func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+        GalleryWindowController.shared.show()
+        return true
     }
     
     public func applicationWillTerminate(_ notification: Notification) {

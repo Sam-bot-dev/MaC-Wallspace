@@ -44,10 +44,28 @@ public final class WallpaperStore: ObservableObject {
         restoreActiveWallpaper()
     }
     
+    private static var resilientDecoder: JSONDecoder {
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .custom { d in
+            let container = try d.singleValueContainer()
+            if let doubleVal = try? container.decode(Double.self) {
+                return Date(timeIntervalSinceReferenceDate: doubleVal)
+            }
+            if let strVal = try? container.decode(String.self) {
+                let iso = ISO8601DateFormatter()
+                if let date = iso.date(from: strVal) {
+                    return date
+                }
+            }
+            return Date()
+        }
+        return decoder
+    }
+    
     public func loadCatalog() {
         guard FileManager.default.fileExists(atPath: catalogFileURL.path),
               let data = try? Data(contentsOf: catalogFileURL),
-              let items = try? JSONDecoder().decode([WallpaperItem].self, from: data) else {
+              let items = try? Self.resilientDecoder.decode([WallpaperItem].self, from: data) else {
             return
         }
         self.wallpapers = items
