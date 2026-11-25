@@ -121,10 +121,10 @@ public final class WallpaperStore: ObservableObject {
     
     public static func generateThumbnail(for mediaURL: URL, destination: URL) {
         let ext = mediaURL.pathExtension.lowercased()
-        let imageExtensions = ["jpg", "jpeg", "png", "heic", "webp", "bmp", "tiff"]
+        let imageExtensions = ["jpg", "jpeg", "png", "heic", "webp", "bmp", "tiff", "gif"]
         
         if imageExtensions.contains(ext) {
-            // Photo thumbnail
+            // Photo or GIF first frame thumbnail
             if let image = NSImage(contentsOf: mediaURL),
                let tiff = image.tiffRepresentation,
                let rep = NSBitmapImageRep(data: tiff),
@@ -152,7 +152,8 @@ public final class WallpaperStore: ObservableObject {
         let filename = sourceURL.lastPathComponent
         let ext = sourceURL.pathExtension.lowercased()
         let imageExtensions = ["jpg", "jpeg", "png", "heic", "webp", "bmp", "tiff"]
-        let isImage = imageExtensions.contains(ext)
+        let isGif = (ext == "gif")
+        let isImage = imageExtensions.contains(ext) || isGif
         
         let itemId = UUID()
         let targetFileName = "\(itemId.uuidString)_\(filename)"
@@ -171,14 +172,14 @@ public final class WallpaperStore: ObservableObject {
             let thumbURL = Self.thumbnailsDirectory.appendingPathComponent(thumbFileName)
             Self.generateThumbnail(for: targetURL, destination: thumbURL)
             
-            var detectedRes = isImage ? "Photo (Retina)" : "Video (Custom)"
-            let category = isImage ? "Photos" : "Custom"
+            var detectedRes = isGif ? "GIF (Animated Loop)" : (isImage ? "Photo (Retina)" : "Video (Custom)")
+            let category = isGif ? "Animated (Live)" : (isImage ? "Photos" : "Custom")
             
             if isImage {
                 if let image = NSImage(contentsOf: targetURL) {
                     let w = Int(image.size.width)
                     let h = Int(image.size.height)
-                    detectedRes = "\(w) × \(h)"
+                    detectedRes = isGif ? "\(w) × \(h) (GIF Loop)" : "\(w) × \(h)"
                 }
             } else {
                 let asset = AVURLAsset(url: targetURL)
@@ -201,7 +202,7 @@ public final class WallpaperStore: ObservableObject {
                 localFileName: targetFileName,
                 isCustom: true,
                 dateAdded: Date(),
-                author: isImage ? "My Photo Wallpaper" : "My Live Wallpaper"
+                author: (isImage && !isGif) ? "My Photo Wallpaper" : "My Live Wallpaper"
             )
             
             wallpapers.insert(item, at: 0)

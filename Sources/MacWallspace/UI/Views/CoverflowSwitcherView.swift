@@ -345,6 +345,12 @@ public struct CoverflowSwitcherView: View {
     private func applyCurrent() {
         guard !availableWallpapers.isEmpty, selectedIndex < availableWallpapers.count else { return }
         let item = availableWallpapers[selectedIndex]
+        if !item.isDownloaded {
+            WallpaperDownloader.shared.downloadWallpaper(item)
+            return
+        }
+        
+        DesktopWindowManager.shared.showAllWindows()
         store.setActiveWallpaper(item)
         
         withAnimation {
