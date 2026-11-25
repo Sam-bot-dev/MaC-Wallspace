@@ -82,7 +82,7 @@ public final class AppSettings: ObservableObject {
         self.lowBatteryThreshold = defaults.object(forKey: Keys.lowBatteryThreshold) as? Int ?? 20
         self.pauseOnFullscreen = defaults.object(forKey: Keys.pauseOnFullscreen) as? Bool ?? true
         self.pauseOnDisplaySleep = defaults.object(forKey: Keys.pauseOnDisplaySleep) as? Bool ?? true
-        self.targetFramerate = defaults.object(forKey: Keys.targetFramerate) as? Int ?? 30 // 30fps default for older Macs
+        self.targetFramerate = defaults.object(forKey: Keys.targetFramerate) as? Int ?? 60 // 60fps native smooth refresh
         self.volume = defaults.object(forKey: Keys.volume) as? Float ?? 0.0
         self.isMuted = defaults.object(forKey: Keys.isMuted) as? Bool ?? true
         self.launchAtLogin = defaults.object(forKey: Keys.launchAtLogin) as? Bool ?? false

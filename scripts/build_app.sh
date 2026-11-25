@@ -44,6 +44,12 @@ if [ -f "$ROOT_DIR/Resources/AppIcon.icns" ]; then
     cp "$ROOT_DIR/Resources/AppIcon.icns" "$RESOURCES_DIR/AppIcon.icns"
 fi
 
+# Copy bundled anime wallpaper artwork
+if [ -f "$ROOT_DIR/Resources/icon_assets/anime_wallpaper.jpg" ]; then
+    echo "==> Embedding anime_wallpaper.jpg..."
+    cp "$ROOT_DIR/Resources/icon_assets/anime_wallpaper.jpg" "$RESOURCES_DIR/anime_wallpaper.jpg"
+fi
+
 echo "==> Signing application bundle (ad-hoc)..."
 codesign --force --deep --timestamp=none --sign - "$APP_BUNDLE" 2>/dev/null || true
 

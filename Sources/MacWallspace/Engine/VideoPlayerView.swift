@@ -12,14 +12,26 @@ public final class VideoPlayerView: NSView {
     
     public override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
-        wantsLayer = true
-        layer?.backgroundColor = NSColor.black.cgColor
+        setupLayer()
     }
     
     public required init?(coder: NSCoder) {
         super.init(coder: coder)
+        setupLayer()
+    }
+    
+    private func setupLayer() {
         wantsLayer = true
         layer?.backgroundColor = NSColor.black.cgColor
+        // Enable hardware-accelerated asynchronous layer compositing for buttery 60fps
+        layer?.drawsAsynchronously = true
+        // Disable CoreAnimation action lookups for zero frame-drop rendering
+        layer?.actions = [
+            "contents": NSNull(),
+            "bounds": NSNull(),
+            "position": NSNull(),
+            "sublayers": NSNull()
+        ]
     }
     
     public override func layout() {
@@ -39,31 +51,34 @@ public final class VideoPlayerView: NSView {
         cleanup()
         self.currentURL = url
         
-        let asset = AVURLAsset(url: url)
+        let asset = AVURLAsset(url: url, options: [
+            AVURLAssetPreferPreciseDurationAndTimingKey: true
+        ])
         let playerItem = AVPlayerItem(asset: asset)
+        
+        // Optimize buffering and decode pipeline for 60fps smooth playback
+        playerItem.preferredForwardBufferDuration = 3.0
         
         let queuePlayer = AVQueuePlayer(playerItem: playerItem)
         queuePlayer.actionAtItemEnd = .none
+        queuePlayer.automaticallyWaitsToMinimizeStalling = false
+        queuePlayer.preventsDisplaySleepDuringVideoPlayback = false
         
-        // Looper
-        if #available(macOS 10.12, *) {
-            self.playerLooper = AVPlayerLooper(player: queuePlayer, templateItem: playerItem)
-        } else {
-            // Fallback end notification loop
-            self.endObserver = NotificationCenter.default.addObserver(
-                forName: .AVPlayerItemDidPlayToEndTime,
-                object: playerItem,
-                queue: .main
-            ) { [weak queuePlayer] _ in
-                queuePlayer?.seek(to: .zero)
-                queuePlayer?.play()
-            }
-        }
+        // AVPlayerLooper provides seamless, zero-gap hardware looping
+        self.playerLooper = AVPlayerLooper(player: queuePlayer, templateItem: playerItem)
         
         let layer = AVPlayerLayer(player: queuePlayer)
         layer.frame = bounds
         layer.videoGravity = (AppSettings.shared.scaleMode == "aspectFit") ? .resizeAspect : .resizeAspectFill
         layer.autoresizingMask = [.layerWidthSizable, .layerHeightSizable]
+        
+        // Enable asynchronous GPU drawing on the player layer
+        layer.drawsAsynchronously = true
+        layer.actions = [
+            "contents": NSNull(),
+            "bounds": NSNull(),
+            "position": NSNull()
+        ]
         
         self.layer?.addSublayer(layer)
         self.playerLayer = layer

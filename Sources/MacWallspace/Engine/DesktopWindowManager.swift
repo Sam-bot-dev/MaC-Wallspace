@@ -92,12 +92,17 @@ public final class DesktopWindowManager {
         let desktopLevel = Int(CGWindowLevelForKey(.desktopWindow))
         window.level = NSWindow.Level(rawValue: desktopLevel)
         
-        // Ensure window stays across spaces, is stationary during Mission Control, doesn't cycle
-        window.collectionBehavior = [.canJoinAllSpaces, .stationary, .ignoresCycle]
-        window.canHide = false
+        // WindowServer performance optimizations:
+        // .none sharing prevents inter-process memory buffer replication
+        window.sharingType = .none
+        window.animationBehavior = .none
         window.hasShadow = false
         window.isOpaque = true
         window.backgroundColor = .black
+        
+        // Ensure window stays across spaces, is stationary during Mission Control, doesn't cycle
+        window.collectionBehavior = [.canJoinAllSpaces, .stationary, .ignoresCycle]
+        window.canHide = false
         
         // CRITICAL: Mouse events must pass directly through to macOS Finder icons!
         window.ignoresMouseEvents = true

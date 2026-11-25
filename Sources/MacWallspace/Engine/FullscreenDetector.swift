@@ -11,9 +11,11 @@ public final class FullscreenDetector {
     }
     
     public func startMonitoring() {
-        // Check every 3 seconds to keep CPU negligible (<0.01%)
-        timer = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: true) { [weak self] _ in
-            self?.checkFullscreenState()
+        // Run check every 4 seconds on background thread to keep main runloop completely unblocked
+        timer = Timer.scheduledTimer(withTimeInterval: 4.0, repeats: true) { [weak self] _ in
+            DispatchQueue.global(qos: .utility).async {
+                self?.checkFullscreenState()
+            }
         }
     }
     
@@ -22,13 +24,16 @@ public final class FullscreenDetector {
         
         let isFrontmostFullscreen = detectIfFrontmostAppIsFullscreen()
         
-        if isFrontmostFullscreen && !isFullscreenActive {
-            isFullscreenActive = true
-            DesktopWindowManager.shared.pauseAll()
-        } else if !isFrontmostFullscreen && isFullscreenActive {
-            isFullscreenActive = false
-            if !AppSettings.shared.isPausedByUser {
-                PowerGovernor.shared.evaluatePowerState()
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            if isFrontmostFullscreen && !self.isFullscreenActive {
+                self.isFullscreenActive = true
+                DesktopWindowManager.shared.pauseAll()
+            } else if !isFrontmostFullscreen && self.isFullscreenActive {
+                self.isFullscreenActive = false
+                if !AppSettings.shared.isPausedByUser {
+                    PowerGovernor.shared.evaluatePowerState()
+                }
             }
         }
     }
@@ -36,12 +41,11 @@ public final class FullscreenDetector {
     private func detectIfFrontmostAppIsFullscreen() -> Bool {
         guard let frontApp = NSWorkspace.shared.frontmostApplication else { return false }
         
-        // If Finder is frontmost, user is on desktop!
+        // If Finder is frontmost, user is on desktop
         if frontApp.bundleIdentifier == "com.apple.finder" {
             return false
         }
         
-        // Check window list for frontmost app covering main screen
         guard let screen = NSScreen.main else { return false }
         let screenBounds = screen.frame
         
@@ -58,7 +62,7 @@ public final class FullscreenDetector {
             }
             
             // Check if frontmost window dimensions match or exceed screen size
-            if width >= screenBounds.width && height >= screenBounds.height - 25 { // Allow slight menu bar offset
+            if width >= screenBounds.width && height >= screenBounds.height - 25 {
                 return true
             }
         }
