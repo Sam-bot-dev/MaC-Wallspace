@@ -1,10 +1,10 @@
 import SwiftUI
 
 public struct ProminentButtonStyle: ButtonStyle {
-    public var backgroundColor: Color = .accentColor
+    public var backgroundColor: Color = .green
     public var foregroundColor: Color = .white
     
-    public init(backgroundColor: Color = .accentColor, foregroundColor: Color = .white) {
+    public init(backgroundColor: Color = .green, foregroundColor: Color = .white) {
         self.backgroundColor = backgroundColor
         self.foregroundColor = foregroundColor
     }
@@ -24,14 +24,14 @@ public struct SecondaryButtonStyle: ButtonStyle {
     
     public func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .foregroundColor(.primary)
+            .foregroundColor(.white)
             .padding(.horizontal, 10)
             .padding(.vertical, 6)
-            .background(configuration.isPressed ? Color.secondary.opacity(0.2) : Color(NSColor.controlBackgroundColor))
+            .background(configuration.isPressed ? Color.white.opacity(0.15) : Color.white.opacity(0.08))
             .cornerRadius(6)
             .overlay(
                 RoundedRectangle(cornerRadius: 6)
-                    .stroke(Color.secondary.opacity(0.3), lineWidth: 1)
+                    .stroke(Color.white.opacity(0.16), lineWidth: 1)
             )
     }
 }
@@ -75,34 +75,33 @@ public struct WallpaperCardView: View {
     
     public var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            // Thumbnail / Preview Box
+            // Thumbnail / Preview Box — 100% Contained, Never Spills Out
             ZStack(alignment: .topTrailing) {
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(Color(NSColor.controlBackgroundColor))
-                    .frame(height: 140)
-                    .overlay(
-                        Group {
-                            if let img = thumbnailImage {
-                                Image(nsImage: img)
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fill)
-                                    .frame(height: 140)
-                                    .clipped()
-                                    .cornerRadius(10)
-                            } else {
-                                VStack(spacing: 8) {
-                                    Image(systemName: iconForCategory(item.category))
-                                        .font(.system(size: 32))
-                                        .foregroundColor(.accentColor)
-                                    Text(item.title)
-                                        .font(.headline)
-                                        .lineLimit(1)
-                                        .multilineTextAlignment(.center)
-                                        .padding(.horizontal, 8)
-                                }
-                            }
+                ZStack {
+                    Color(red: 0.04, green: 0.04, blue: 0.05)
+                    
+                    if let img = thumbnailImage {
+                        Image(nsImage: img)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(maxWidth: .infinity, maxHeight: 140)
+                    } else {
+                        VStack(spacing: 8) {
+                            Image(systemName: iconForCategory(item.category))
+                                .font(.system(size: 32))
+                                .foregroundColor(.green)
+                            Text(item.title)
+                                .font(.headline)
+                                .foregroundColor(.white)
+                                .lineLimit(1)
+                                .multilineTextAlignment(.center)
+                                .padding(.horizontal, 8)
                         }
-                    )
+                    }
+                }
+                .frame(height: 140)
+                .frame(maxWidth: .infinity)
+                .clipShape(RoundedRectangle(cornerRadius: 10))
                 
                 // Badges
                 HStack(spacing: 4) {
@@ -120,7 +119,7 @@ public struct WallpaperCardView: View {
                         .font(.system(size: 9, weight: .semibold))
                         .padding(.horizontal, 5)
                         .padding(.vertical, 3)
-                        .background(Color.black.opacity(0.6))
+                        .background(Color.black.opacity(0.8))
                         .foregroundColor(.white)
                         .cornerRadius(4)
                 }
@@ -133,6 +132,7 @@ public struct WallpaperCardView: View {
                     Text(item.title)
                         .font(.subheadline)
                         .fontWeight(.semibold)
+                        .foregroundColor(.white)
                         .lineLimit(1)
                     Spacer()
                     if item.fileSizeMB > 0 {
@@ -154,6 +154,7 @@ public struct WallpaperCardView: View {
             HStack(spacing: 8) {
                 if item.isDownloaded {
                     Button(action: {
+                        DesktopWindowManager.shared.showAllWindows()
                         store.setActiveWallpaper(item)
                     }) {
                         HStack(spacing: 4) {
@@ -162,7 +163,7 @@ public struct WallpaperCardView: View {
                         }
                         .frame(maxWidth: .infinity)
                     }
-                    .buttonStyle(ProminentButtonStyle(backgroundColor: isActive ? Color.green : Color.accentColor))
+                    .buttonStyle(ProminentButtonStyle(backgroundColor: isActive ? Color.green : Color.green.opacity(0.85)))
                     .disabled(isActive)
                     
                     Button(action: {
@@ -171,7 +172,7 @@ public struct WallpaperCardView: View {
                         }
                     }) {
                         Image(systemName: isInActivePlaylist ? "text.badge.checkmark" : "text.badge.plus")
-                            .foregroundColor(isInActivePlaylist ? .accentColor : .secondary)
+                            .foregroundColor(isInActivePlaylist ? .green : .secondary)
                     }
                     .buttonStyle(SecondaryButtonStyle())
                     .help(isInActivePlaylist ? "In active playlist (click to remove)" : "Add to active playlist")
@@ -212,12 +213,12 @@ public struct WallpaperCardView: View {
         .padding(10)
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .fill(Color(NSColor.windowBackgroundColor))
-                .shadow(color: Color.black.opacity(0.1), radius: 3, x: 0, y: 1)
+                .fill(Color(red: 0.08, green: 0.08, blue: 0.10))
+                .shadow(color: Color.black.opacity(0.4), radius: 4, x: 0, y: 2)
         )
         .overlay(
             RoundedRectangle(cornerRadius: 12)
-                .stroke(isActive ? Color.accentColor : Color.clear, lineWidth: 2)
+                .stroke(isActive ? Color.green : Color.white.opacity(0.12), lineWidth: isActive ? 2 : 1)
         )
     }
     

@@ -4,14 +4,19 @@ import Combine
 public final class DesktopWindowManager: ObservableObject {
     public static let shared = DesktopWindowManager()
     
-    private var windows: [NSScreen: NSWindow] = [:]
-    private var playerViews: [NSScreen: VideoPlayerView] = [:]
+    // Key by CGDirectDisplayID to preserve display identity across space and screen parameter changes
+    private var windows: [CGDirectDisplayID: NSWindow] = [:]
+    private var playerViews: [CGDirectDisplayID: VideoPlayerView] = [:]
     private var cancellables = Set<AnyCancellable>()
     
     @Published public var isMacDesktopExposed: Bool = false
     
     private init() {
         setupObservers()
+    }
+    
+    private func displayID(for screen: NSScreen) -> CGDirectDisplayID {
+        return (screen.deviceDescription[NSDeviceDescriptionKey("NSScreenNumber")] as? CGDirectDisplayID) ?? 0
     }
     
     private func setupObservers() {
@@ -54,21 +59,26 @@ public final class DesktopWindowManager: ObservableObject {
     }
     
     public func rebuildWindows() {
-        for (screen, window) in windows {
-            if !NSScreen.screens.contains(screen) {
-                if let player = playerViews[screen] {
+        let activeDisplayIDs = Set(NSScreen.screens.map { displayID(for: $0) })
+        
+        // Remove disconnected screens
+        for (did, window) in windows {
+            if !activeDisplayIDs.contains(did) {
+                if let player = playerViews[did] {
                     player.cleanup()
-                    playerViews.removeValue(forKey: screen)
+                    playerViews.removeValue(forKey: did)
                 }
                 window.orderOut(nil)
-                windows.removeValue(forKey: screen)
+                windows.removeValue(forKey: did)
             }
         }
         
+        // Update existing or create new for connected screens
         for screen in NSScreen.screens {
-            if let existingWindow = windows[screen] {
+            let did = displayID(for: screen)
+            if let existingWindow = windows[did] {
                 existingWindow.setFrame(screen.frame, display: true)
-                playerViews[screen]?.frame = existingWindow.contentView?.bounds ?? .zero
+                playerViews[did]?.frame = existingWindow.contentView?.bounds ?? .zero
             } else {
                 createWindow(for: screen)
             }
@@ -76,6 +86,7 @@ public final class DesktopWindowManager: ObservableObject {
     }
     
     private func createWindow(for screen: NSScreen) {
+        let did = displayID(for: screen)
         let frame = screen.frame
         let window = NSWindow(
             contentRect: frame,
@@ -101,13 +112,18 @@ public final class DesktopWindowManager: ObservableObject {
         let playerView = VideoPlayerView(frame: NSRect(origin: .zero, size: frame.size))
         playerView.autoresizingMask = [.width, .height]
         
+        // Immediately load current active wallpaper so the window is NEVER unrendered black
+        if let active = WallpaperStore.shared.activeWallpaper, let url = active.localFileURL {
+            playerView.loadMedia(url: url)
+        }
+        
         window.contentView = playerView
         if !isMacDesktopExposed {
             window.orderFront(nil)
         }
         
-        windows[screen] = window
-        playerViews[screen] = playerView
+        windows[did] = window
+        playerViews[did] = playerView
     }
     
     @objc private func screenParametersDidChange() {

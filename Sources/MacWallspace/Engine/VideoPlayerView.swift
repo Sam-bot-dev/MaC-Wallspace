@@ -24,10 +24,6 @@ public final class VideoPlayerView: NSView {
         setupLayer()
     }
     
-    public override var wantsUpdateLayer: Bool {
-        return true
-    }
-    
     private func setupLayer() {
         wantsLayer = true
         layer?.backgroundColor = NSColor.black.cgColor
@@ -35,8 +31,8 @@ public final class VideoPlayerView: NSView {
         
         contentLayer.frame = bounds
         contentLayer.contentsGravity = (AppSettings.shared.scaleMode == "aspectFit") ? .resizeAspect : .resizeAspectFill
+        contentLayer.autoresizingMask = [.layerWidthSizable, .layerHeightSizable]
         contentLayer.actions = [
-            "contents": NSNull(),
             "bounds": NSNull(),
             "position": NSNull(),
             "sublayers": NSNull()

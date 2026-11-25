@@ -36,21 +36,23 @@ public struct MainGalleryView: View {
     
     public var body: some View {
         HStack(spacing: 0) {
-            // Sidebar
+            // Sidebar (Deep Obsidian Black)
             VStack(alignment: .leading, spacing: 6) {
                 HStack(spacing: 10) {
                     Image(systemName: "photo.on.rectangle.angled")
                         .font(.system(size: 20, weight: .bold))
-                        .foregroundColor(.accentColor)
+                        .foregroundColor(.green)
                     Text("MaC Wallspace")
                         .font(.headline)
                         .fontWeight(.bold)
+                        .foregroundColor(.white)
                 }
                 .padding(.horizontal, 16)
                 .padding(.top, 20)
                 .padding(.bottom, 12)
                 
                 Divider()
+                    .background(Color.white.opacity(0.1))
                     .padding(.bottom, 8)
                 
                 ForEach(MainTab.allCases) { tab in
@@ -66,8 +68,8 @@ public struct MainGalleryView: View {
                         }
                         .padding(.horizontal, 12)
                         .padding(.vertical, 8)
-                        .background(selectedTab == tab ? Color.accentColor.opacity(0.15) : Color.clear)
-                        .foregroundColor(selectedTab == tab ? .accentColor : .primary)
+                        .background(selectedTab == tab ? Color.green.opacity(0.18) : Color.clear)
+                        .foregroundColor(selectedTab == tab ? .green : Color.white.opacity(0.75))
                         .cornerRadius(8)
                     }
                     .buttonStyle(PlainButtonStyle())
@@ -85,6 +87,7 @@ public struct MainGalleryView: View {
                         Text(windowManager.isMacDesktopExposed ? "macOS Desktop" : (settings.isPausedByUser ? "Paused" : "Active (60 FPS)"))
                             .font(.caption2)
                             .fontWeight(.bold)
+                            .foregroundColor(.white)
                     }
                     if !windowManager.isMacDesktopExposed, let active = store.activeWallpaper {
                         Text(active.title)
@@ -94,22 +97,28 @@ public struct MainGalleryView: View {
                     }
                 }
                 .padding(10)
-                .background(Color(NSColor.controlBackgroundColor))
+                .background(Color(red: 0.08, green: 0.08, blue: 0.10))
                 .cornerRadius(8)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(Color.white.opacity(0.1), lineWidth: 1)
+                )
                 .padding(12)
             }
             .frame(width: 200)
-            .background(Color(NSColor.windowBackgroundColor))
+            .background(Color(red: 0.04, green: 0.04, blue: 0.05))
             
             Divider()
+                .background(Color.white.opacity(0.1))
             
-            // Content Area
+            // Content Area (Pure Pitch Black)
             VStack(spacing: 0) {
                 contentHeader
                 Divider()
+                    .background(Color.white.opacity(0.1))
                 contentBody
             }
-            .background(Color(NSColor.underPageBackgroundColor))
+            .background(Color.black)
         }
         .frame(minWidth: 840, minHeight: 540)
     }
@@ -120,6 +129,7 @@ public struct MainGalleryView: View {
             Text(selectedTab.rawValue)
                 .font(.title2)
                 .fontWeight(.bold)
+                .foregroundColor(.white)
             
             Spacer()
             
@@ -177,11 +187,12 @@ public struct MainGalleryView: View {
                     Text("3D Switcher")
                 }
             }
-            .buttonStyle(ProminentButtonStyle())
+            .buttonStyle(ProminentButtonStyle(backgroundColor: .green))
             .help("Launch 3D Coverflow Wallpaper Switcher (Arrow keys to browse, Enter to apply)")
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 14)
+        .background(Color(red: 0.05, green: 0.05, blue: 0.07))
     }
     
     @ViewBuilder
@@ -196,12 +207,16 @@ public struct MainGalleryView: View {
         case .custom:
             CustomImportView()
                 .padding(20)
+                .background(Color.black)
         case .displays:
             DisplaysConfigView()
+                .background(Color.black)
         case .performance:
             PerformanceSettingsView()
+                .background(Color.black)
         case .settings:
             SettingsView()
+                .background(Color.black)
         }
     }
     
@@ -220,8 +235,8 @@ public struct MainGalleryView: View {
                                 .fontWeight(settings.selectedCategory == cat ? .bold : .medium)
                                 .padding(.horizontal, 12)
                                 .padding(.vertical, 6)
-                                .background(settings.selectedCategory == cat ? Color.accentColor : Color(NSColor.controlBackgroundColor))
-                                .foregroundColor(settings.selectedCategory == cat ? .white : .primary)
+                                .background(settings.selectedCategory == cat ? Color.green : Color(red: 0.10, green: 0.10, blue: 0.12))
+                                .foregroundColor(settings.selectedCategory == cat ? .black : .white)
                                 .cornerRadius(16)
                         }
                         .buttonStyle(PlainButtonStyle())
@@ -241,6 +256,7 @@ public struct MainGalleryView: View {
                 .padding(20)
             }
         }
+        .background(Color.black)
     }
     
     @ViewBuilder
@@ -255,11 +271,14 @@ public struct MainGalleryView: View {
                     .foregroundColor(.secondary)
                 Text("No Wallpapers in Library Yet")
                     .font(.headline)
+                    .foregroundColor(.white)
                 Text("Explore the Online Gallery or Import your own videos and photos.")
                     .font(.subheadline)
                     .foregroundColor(.secondary)
                 Spacer()
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(Color.black)
         } else {
             ScrollView {
                 LazyVGrid(columns: columns, spacing: 16) {
@@ -269,6 +288,7 @@ public struct MainGalleryView: View {
                 }
                 .padding(20)
             }
+            .background(Color.black)
         }
     }
     

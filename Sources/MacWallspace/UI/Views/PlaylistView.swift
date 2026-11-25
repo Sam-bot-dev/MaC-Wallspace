@@ -20,42 +20,52 @@ public struct PlaylistView: View {
     
     public var body: some View {
         VStack(spacing: 0) {
-            // Top Playlist Selector Bar
-            HStack(spacing: 12) {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 8) {
-                        ForEach(playlistManager.playlists) { playlist in
-                            let isSelected = (playlist.id == selectedPlaylistId)
-                            let isActive = (playlist.id == playlistManager.activePlaylistId)
-                            
-                            Button(action: {
-                                selectedPlaylistId = playlist.id
-                            }) {
-                                HStack(spacing: 6) {
-                                    if isActive {
-                                        Circle()
-                                            .fill(Color.green)
-                                            .frame(width: 6, height: 6)
+            // Top Playlist Selector Bar with Scroll Arrows & Scrollbar
+            HStack(spacing: 10) {
+                ScrollViewReader { proxy in
+                    ScrollView(.horizontal, showsIndicators: true) {
+                        HStack(spacing: 8) {
+                            ForEach(playlistManager.playlists) { playlist in
+                                let isSelected = (playlist.id == selectedPlaylistId)
+                                let isActive = (playlist.id == playlistManager.activePlaylistId)
+                                
+                                Button(action: {
+                                    selectedPlaylistId = playlist.id
+                                }) {
+                                    HStack(spacing: 6) {
+                                        if isActive {
+                                            Circle()
+                                                .fill(Color.green)
+                                                .frame(width: 6, height: 6)
+                                        }
+                                        Text(playlist.name)
+                                            .fontWeight(isSelected ? .bold : .medium)
+                                            .lineLimit(1)
+                                        Text("(\(playlist.itemIds.count))")
+                                            .font(.caption)
+                                            .foregroundColor(isSelected ? .green : .secondary)
                                     }
-                                    Text(playlist.name)
-                                        .fontWeight(isSelected ? .bold : .regular)
-                                    Text("(\(playlist.itemIds.count))")
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
+                                    .padding(.horizontal, 14)
+                                    .padding(.vertical, 7)
+                                    .background(isSelected ? Color.green.opacity(0.2) : Color.white.opacity(0.06))
+                                    .foregroundColor(isSelected ? .green : .white)
+                                    .cornerRadius(8)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .stroke(isSelected ? Color.green.opacity(0.6) : Color.white.opacity(0.12), lineWidth: 1)
+                                    )
                                 }
-                                .padding(.horizontal, 12)
-                                .padding(.vertical, 6)
-                                .background(isSelected ? Color.accentColor.opacity(0.2) : Color(NSColor.controlBackgroundColor))
-                                .foregroundColor(isSelected ? .accentColor : .primary)
-                                .cornerRadius(8)
+                                .buttonStyle(PlainButtonStyle())
+                                .id(playlist.id)
                             }
-                            .buttonStyle(PlainButtonStyle())
                         }
+                        .padding(.vertical, 4)
+                        .padding(.horizontal, 2)
                     }
-                    .padding(.vertical, 2)
                 }
                 
-                Spacer()
+                Divider()
+                    .frame(height: 24)
                 
                 Button(action: {
                     newPlaylistName = ""
@@ -64,13 +74,17 @@ public struct PlaylistView: View {
                     HStack(spacing: 4) {
                         Image(systemName: "plus")
                         Text("New Playlist")
+                            .lineLimit(1)
                     }
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 6)
                 }
                 .buttonStyle(SecondaryButtonStyle())
+                .fixedSize()
             }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 12)
-            .background(Color(NSColor.windowBackgroundColor))
+            .padding(.horizontal, 16)
+            .padding(.vertical, 10)
+            .background(Color(red: 0.05, green: 0.05, blue: 0.07))
             
             Divider()
             
@@ -78,7 +92,7 @@ public struct PlaylistView: View {
             if isCreatingNewPlaylist {
                 HStack(spacing: 12) {
                     Image(systemName: "rectangle.stack.badge.plus")
-                        .foregroundColor(.accentColor)
+                        .foregroundColor(.green)
                     TextField("Enter playlist name (e.g. Anime Favorites, Relaxing, 4K)", text: $newPlaylistName)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                     
@@ -89,15 +103,17 @@ public struct PlaylistView: View {
                         }
                         isCreatingNewPlaylist = false
                     }
-                    .buttonStyle(ProminentButtonStyle())
+                    .buttonStyle(ProminentButtonStyle(backgroundColor: .green))
+                    .fixedSize()
                     
                     Button("Cancel") {
                         isCreatingNewPlaylist = false
                     }
                     .buttonStyle(SecondaryButtonStyle())
+                    .fixedSize()
                 }
                 .padding(12)
-                .background(Color(NSColor.controlBackgroundColor))
+                .background(Color(red: 0.08, green: 0.08, blue: 0.10))
                 Divider()
             }
             
@@ -119,7 +135,7 @@ public struct PlaylistView: View {
                             .foregroundColor(.secondary.opacity(0.6))
                         Text("This playlist is empty")
                             .font(.headline)
-                            .foregroundColor(.secondary)
+                            .foregroundColor(.white)
                         Text("Whenever you add or import a live wallpaper, it is automatically saved here.\nYou can also add existing wallpapers below:")
                             .font(.subheadline)
                             .foregroundColor(.secondary)
@@ -133,10 +149,11 @@ public struct PlaylistView: View {
                                 Text("Add Wallpapers to Playlist")
                             }
                         }
-                        .buttonStyle(ProminentButtonStyle())
+                        .buttonStyle(ProminentButtonStyle(backgroundColor: .green))
                         Spacer()
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(Color.black)
                 } else {
                     ScrollView {
                         LazyVGrid(columns: columns, spacing: 16) {
@@ -146,9 +163,11 @@ public struct PlaylistView: View {
                         }
                         .padding(20)
                     }
+                    .background(Color.black)
                 }
             }
         }
+        .background(Color.black)
         .sheet(isPresented: $showAddWallpapersSheet) {
             addWallpapersSheet
         }
@@ -158,19 +177,21 @@ public struct PlaylistView: View {
     
     @ViewBuilder
     private func playlistHeaderControls(playlist: Playlist) -> some View {
-        HStack(spacing: 16) {
+        HStack(spacing: 12) {
             VStack(alignment: .leading, spacing: 2) {
                 HStack(spacing: 8) {
                     Text(playlist.name)
                         .font(.title3)
                         .fontWeight(.bold)
+                        .foregroundColor(.white)
+                        .lineLimit(1)
                     
                     if playlist.id == playlistManager.activePlaylistId {
                         Text("ACTIVE PLAYLIST")
-                            .font(.system(size: 10, weight: .bold))
+                            .font(.system(size: 9, weight: .bold))
                             .padding(.horizontal, 6)
                             .padding(.vertical, 2)
-                            .background(Color.green.opacity(0.2))
+                            .background(Color.green.opacity(0.25))
                             .foregroundColor(.green)
                             .cornerRadius(4)
                     }
@@ -179,6 +200,7 @@ public struct PlaylistView: View {
                 Text("\(playlist.itemIds.count) wallpapers • \(playlist.isShuffle ? "Shuffle On" : "Sequential")")
                     .font(.caption)
                     .foregroundColor(.secondary)
+                    .lineLimit(1)
             }
             
             Spacer()
@@ -192,13 +214,17 @@ public struct PlaylistView: View {
                     HStack(spacing: 4) {
                         Image(systemName: "play.fill")
                         Text("Set Active & Play")
+                            .fontWeight(.semibold)
                     }
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 6)
                 }
-                .buttonStyle(ProminentButtonStyle())
+                .buttonStyle(ProminentButtonStyle(backgroundColor: Color.green))
+                .fixedSize()
             }
             
             // Next / Prev Wallpaper in Playlist
-            HStack(spacing: 4) {
+            HStack(spacing: 2) {
                 Button(action: {
                     playlistManager.activePlaylistId = playlist.id
                     playlistManager.cyclePrevious()
@@ -219,20 +245,20 @@ public struct PlaylistView: View {
             }
             
             // Auto Cycle Picker
-            HStack(spacing: 6) {
+            HStack(spacing: 4) {
                 Image(systemName: "clock.arrow.circlepath")
                     .foregroundColor(.secondary)
                 Picker("", selection: Binding(
                     get: { playlist.cycleIntervalMinutes },
                     set: { playlistManager.setCycleInterval(minutes: $0, for: playlist.id) }
                 )) {
-                    Text("Manual Only").tag(0)
-                    Text("Every 5 min").tag(5)
-                    Text("Every 15 min").tag(15)
-                    Text("Every 30 min").tag(30)
-                    Text("Every 1 Hour").tag(60)
+                    Text("Manual").tag(0)
+                    Text("5 min").tag(5)
+                    Text("15 min").tag(15)
+                    Text("30 min").tag(30)
+                    Text("1 Hour").tag(60)
                 }
-                .frame(width: 130)
+                .frame(width: 95)
             }
             
             // Shuffle Toggle
@@ -240,7 +266,7 @@ public struct PlaylistView: View {
                 playlistManager.setShuffle(!playlist.isShuffle, for: playlist.id)
             }) {
                 Image(systemName: "shuffle")
-                    .foregroundColor(playlist.isShuffle ? .accentColor : .secondary)
+                    .foregroundColor(playlist.isShuffle ? .green : .secondary)
             }
             .buttonStyle(SecondaryButtonStyle())
             .help(playlist.isShuffle ? "Shuffle is ON" : "Shuffle is OFF")
@@ -269,7 +295,7 @@ public struct PlaylistView: View {
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 10)
-        .background(Color(NSColor.controlBackgroundColor).opacity(0.5))
+        .background(Color(red: 0.08, green: 0.08, blue: 0.10))
     }
     
     // MARK: - Card Inside Playlist
@@ -289,7 +315,7 @@ public struct PlaylistView: View {
                     Image(systemName: "xmark.circle.fill")
                         .font(.system(size: 18))
                         .foregroundColor(.white)
-                        .background(Circle().fill(Color.black.opacity(0.6)))
+                        .background(Circle().fill(Color.black.opacity(0.8)))
                 }
                 .buttonStyle(PlainButtonStyle())
                 .padding(8)
@@ -317,11 +343,12 @@ public struct PlaylistView: View {
             HStack {
                 Text("Add Wallpapers to '\(currentPlaylist?.name ?? "Playlist")'")
                     .font(.headline)
+                    .foregroundColor(.white)
                 Spacer()
                 Button("Done") {
                     showAddWallpapersSheet = false
                 }
-                .buttonStyle(ProminentButtonStyle())
+                .buttonStyle(ProminentButtonStyle(backgroundColor: .green))
             }
             .padding()
             
@@ -332,7 +359,7 @@ public struct PlaylistView: View {
                     ForEach(store.wallpapers.filter { $0.isDownloaded }) { item in
                         let inPlaylist = currentPlaylist?.itemIds.contains(item.id) ?? false
                         
-                        VStack {
+                        VStack(spacing: 8) {
                             WallpaperCardView(wallpaper: item)
                             
                             if inPlaylist {
@@ -358,14 +385,16 @@ public struct PlaylistView: View {
                                         Text("Add to Playlist")
                                     }
                                 }
-                                .buttonStyle(ProminentButtonStyle())
+                                .buttonStyle(ProminentButtonStyle(backgroundColor: .green))
                             }
                         }
                     }
                 }
                 .padding()
             }
+            .background(Color.black)
         }
         .frame(minWidth: 600, minHeight: 450)
+        .background(Color(red: 0.08, green: 0.08, blue: 0.10))
     }
 }

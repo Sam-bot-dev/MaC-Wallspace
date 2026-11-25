@@ -160,14 +160,10 @@ MaC-Wallspace includes curated high-definition 4K & 1080p live loops and Retina 
 
 ### 🖼️ Featured Community Wallpapers (Click Any Image to View Full Size)
 
-<p align="center">
-  <a href="docs/previews/preview_ichigo_manga.jpg"><img src="docs/previews/preview_ichigo_manga.jpg" width="48%" alt="Bleach Manga Ichigo Slash"></a>
-  <a href="docs/previews/preview_cat_maid_logo.jpg"><img src="docs/previews/preview_cat_maid_logo.jpg" width="48%" alt="Anime Cat Maid Logo"></a>
-</p>
-<p align="center">
-  <a href="docs/previews/preview_bunny_chick.jpg"><img src="docs/previews/preview_bunny_chick.jpg" width="48%" alt="Chillop Bunny and Chick"></a>
-  <a href="docs/previews/preview_lofi_headphones.jpg"><img src="docs/previews/preview_lofi_headphones.jpg" width="48%" alt="Lo-Fi Mindscape Headphones"></a>
-</p>
+| 🗡️ **Bleach Manga Ichigo** | 🎀 **Cat Maid Logo** | 🎧 **Lo-Fi Headphones** | 🐰 **Bunny & Chick Meadow** |
+| :---: | :---: | :---: | :---: |
+| [![Bleach Manga](docs/previews/preview_ichigo_manga.jpg)](docs/previews/preview_ichigo_manga.jpg) | [![Cat Maid](docs/previews/preview_cat_maid_logo.jpg)](docs/previews/preview_cat_maid_logo.jpg) | [![Lo-Fi Headphones](docs/previews/preview_lofi_headphones.jpg)](docs/previews/preview_lofi_headphones.jpg) | [![Bunny & Chick](docs/previews/preview_bunny_chick.jpg)](docs/previews/preview_bunny_chick.jpg) |
+| **5K Ultra-Retina (5120×2880)** | **Ultrawide 21:9 (2560×1080)** | **1080p Aesthetic (1920×1080)** | **1080p Nature (1920×1080)** |
 
 ### 🎬 Curated Live & Static Wallpapers
 
