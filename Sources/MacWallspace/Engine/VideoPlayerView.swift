@@ -192,6 +192,10 @@ public final class VideoPlayerView: NSView {
         queuePlayer.actionAtItemEnd = .none
         queuePlayer.automaticallyWaitsToMinimizeStalling = false
         queuePlayer.preventsDisplaySleepDuringVideoPlayback = false
+        if AppSettings.shared.isMuted {
+            queuePlayer.volume = 0.0
+            queuePlayer.isMuted = true
+        }
         
         self.playerLooper = AVPlayerLooper(player: queuePlayer, templateItem: playerItem)
         
