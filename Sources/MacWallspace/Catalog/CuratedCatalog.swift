@@ -1,7 +1,7 @@
 import Foundation
 
 public struct CuratedCatalog {
-    public static let categories = ["All", "Nature", "Aerial", "Sci-Fi", "Anime & Cozy", "Minimalist", "Custom"]
+    public static let categories = ["All", "Photos", "Anime & Cozy", "Nature", "Aerial", "Sci-Fi", "Minimalist", "Custom"]
     
     public static let items: [WallpaperItem] = [
         WallpaperItem(

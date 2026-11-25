@@ -3,7 +3,7 @@ import SwiftUI
 public enum MainTab: String, CaseIterable, Identifiable {
     case gallery = "Gallery"
     case library = "My Library"
-    case custom = "Import Custom"
+    case custom = "Import Media"
     case displays = "Displays"
     case performance = "Performance"
     case settings = "Settings"
@@ -26,6 +26,7 @@ public struct MainGalleryView: View {
     @State private var selectedTab: MainTab = .gallery
     @ObservedObject var store = WallpaperStore.shared
     @ObservedObject var settings = AppSettings.shared
+    @ObservedObject var windowManager = DesktopWindowManager.shared
     
     private let columns = [
         GridItem(.adaptive(minimum: 220, maximum: 280), spacing: 16)
@@ -77,13 +78,13 @@ public struct MainGalleryView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     HStack {
                         Circle()
-                            .fill(settings.isPausedByUser ? Color.orange : Color.green)
+                            .fill(windowManager.isMacDesktopExposed ? Color.gray : (settings.isPausedByUser ? Color.orange : Color.green))
                             .frame(width: 8, height: 8)
-                        Text(settings.isPausedByUser ? "Paused" : "Active")
+                        Text(windowManager.isMacDesktopExposed ? "macOS Desktop" : (settings.isPausedByUser ? "Paused" : "Active (60 FPS)"))
                             .font(.caption2)
                             .fontWeight(.bold)
                     }
-                    if let active = store.activeWallpaper {
+                    if !windowManager.isMacDesktopExposed, let active = store.activeWallpaper {
                         Text(active.title)
                             .font(.caption)
                             .lineLimit(1)
@@ -108,17 +109,41 @@ public struct MainGalleryView: View {
             }
             .background(Color(NSColor.underPageBackgroundColor))
         }
-        .frame(minWidth: 800, minHeight: 520)
+        .frame(minWidth: 840, minHeight: 540)
     }
     
     @ViewBuilder
     private var contentHeader: some View {
-        HStack {
+        HStack(spacing: 10) {
             Text(selectedTab.rawValue)
                 .font(.title2)
                 .fontWeight(.bold)
             
             Spacer()
+            
+            // Reset to Default Wallpaper Button
+            Button(action: {
+                DesktopWindowManager.shared.resetToDefaultWallpaper()
+            }) {
+                HStack(spacing: 4) {
+                    Image(systemName: "arrow.counterclockwise.circle.fill")
+                    Text("Default Wallpaper")
+                }
+            }
+            .buttonStyle(SecondaryButtonStyle())
+            .help("Revert immediately to the built-in default wallpaper")
+            
+            // Toggle macOS Native Desktop Picture Button
+            Button(action: {
+                DesktopWindowManager.shared.toggleMacDesktop()
+            }) {
+                HStack(spacing: 4) {
+                    Image(systemName: windowManager.isMacDesktopExposed ? "sparkles" : "desktopcomputer")
+                    Text(windowManager.isMacDesktopExposed ? "Restore Wallspace" : "macOS Desktop")
+                }
+            }
+            .buttonStyle(SecondaryButtonStyle())
+            .help(windowManager.isMacDesktopExposed ? "Show MaC Wallspace active wallpaper" : "Hide live wallpaper and show your default macOS desktop picture")
             
             // Quick playback toggle
             Button(action: {
@@ -212,9 +237,9 @@ public struct MainGalleryView: View {
                 Image(systemName: "photo.stack")
                     .font(.system(size: 48))
                     .foregroundColor(.secondary)
-                Text("No Wallpapers Downloaded Yet")
+                Text("No Wallpapers in Library Yet")
                     .font(.headline)
-                Text("Explore the Online Gallery or Import your own videos.")
+                Text("Explore the Online Gallery or Import your own videos and photos.")
                     .font(.subheadline)
                     .foregroundColor(.secondary)
                 Spacer()

@@ -38,14 +38,24 @@ public final class MenuBarController: NSObject, NSMenuDelegate {
         menu.removeAllItems()
         
         // Status header
+        let isMacDesktop = DesktopWindowManager.shared.isMacDesktopExposed
         let isPaused = AppSettings.shared.isPausedByUser
-        let statusTitle = "MaC Wallspace: \(isPaused ? "Paused" : "Running")"
+        
+        let statusTitle: String
+        if isMacDesktop {
+            statusTitle = "MaC Wallspace: macOS Desktop Showing"
+        } else if isPaused {
+            statusTitle = "MaC Wallspace: Paused"
+        } else {
+            statusTitle = "MaC Wallspace: Running (60 FPS)"
+        }
+        
         let headerItem = NSMenuItem(title: statusTitle, action: nil, keyEquivalent: "")
         headerItem.isEnabled = false
         menu.addItem(headerItem)
         
         // Active wallpaper
-        if let active = WallpaperStore.shared.activeWallpaper {
+        if !isMacDesktop, let active = WallpaperStore.shared.activeWallpaper {
             let activeItem = NSMenuItem(title: "Current: \(active.title)", action: nil, keyEquivalent: "")
             activeItem.isEnabled = false
             menu.addItem(activeItem)
@@ -53,9 +63,9 @@ public final class MenuBarController: NSObject, NSMenuDelegate {
         
         menu.addItem(NSMenuItem.separator())
         
-        // Controls
+        // Playback Controls
         let playPauseItem = NSMenuItem(
-            title: isPaused ? "Resume Live Wallpaper" : "Pause Live Wallpaper",
+            title: isPaused ? "Resume Wallpaper" : "Pause Wallpaper",
             action: #selector(togglePlayback),
             keyEquivalent: "p"
         )
@@ -69,6 +79,25 @@ public final class MenuBarController: NSObject, NSMenuDelegate {
         )
         nextItem.target = self
         menu.addItem(nextItem)
+        
+        // Reset to Default Wallpaper
+        let defaultItem = NSMenuItem(
+            title: "Reset to Default Wallpaper",
+            action: #selector(resetToDefault),
+            keyEquivalent: "d"
+        )
+        defaultItem.target = self
+        menu.addItem(defaultItem)
+        
+        // Show / Hide native macOS desktop
+        let desktopTitle = isMacDesktop ? "Restore MaC Wallspace" : "Show macOS Default Wallpaper"
+        let desktopItem = NSMenuItem(
+            title: desktopTitle,
+            action: #selector(toggleMacDesktop),
+            keyEquivalent: ""
+        )
+        desktopItem.target = self
+        menu.addItem(desktopItem)
         
         let muteTitle = AppSettings.shared.isMuted ? "Unmute Audio" : "Mute Audio"
         let muteItem = NSMenuItem(title: muteTitle, action: #selector(toggleMute), keyEquivalent: "m")
@@ -87,7 +116,7 @@ public final class MenuBarController: NSObject, NSMenuDelegate {
         menu.addItem(galleryItem)
         
         let importItem = NSMenuItem(
-            title: "Import Custom Video...",
+            title: "Import Custom Video or Photo...",
             action: #selector(openImport),
             keyEquivalent: "i"
         )
@@ -106,9 +135,9 @@ public final class MenuBarController: NSObject, NSMenuDelegate {
         launchItem.target = self
         menu.addItem(launchItem)
         
-        // Power Profile Info
+        // Hardware Profile Info
         let powerItem = NSMenuItem(
-            title: "Profile: \(SystemInfo.isIntelMac ? "Intel Low Power" : "Apple Silicon")",
+            title: "Engine: Hardware H.264 (60 FPS)",
             action: nil,
             keyEquivalent: ""
         )
@@ -133,6 +162,14 @@ public final class MenuBarController: NSObject, NSMenuDelegate {
     
     @objc private func nextWallpaper() {
         DesktopWindowManager.shared.cycleNextWallpaper()
+    }
+    
+    @objc private func resetToDefault() {
+        DesktopWindowManager.shared.resetToDefaultWallpaper()
+    }
+    
+    @objc private func toggleMacDesktop() {
+        DesktopWindowManager.shared.toggleMacDesktop()
     }
     
     @objc private func toggleMute() {

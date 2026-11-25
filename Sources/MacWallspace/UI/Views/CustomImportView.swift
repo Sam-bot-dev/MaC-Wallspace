@@ -20,14 +20,14 @@ public struct CustomImportView: View {
                     )
                 
                 VStack(spacing: 12) {
-                    Image(systemName: "arrow.down.doc.fill")
+                    Image(systemName: "photo.on.rectangle.angled")
                         .font(.system(size: 44))
                         .foregroundColor(isTargeted ? .accentColor : .secondary)
                     
-                    Text("Drag & Drop Video File Here")
+                    Text("Drag & Drop Video or Photo Wallpaper Here")
                         .font(.headline)
                     
-                    Text("Supports MP4, MOV, M4V, and Animated GIF\nHardware-accelerated decoding via VideoToolbox")
+                    Text("Supports Live Videos (MP4, MOV, GIF) & High-Res Photos (PNG, JPG, HEIC, WEBP)\nPhotos run at 0.0% CPU • Videos run at smooth 60 FPS")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                         .multilineTextAlignment(.center)
@@ -35,7 +35,7 @@ public struct CustomImportView: View {
                     Button(action: selectFileManually) {
                         HStack {
                             Image(systemName: "folder")
-                            Text("Browse Files...")
+                            Text("Browse Videos & Photos...")
                         }
                     }
                     .buttonStyle(ProminentButtonStyle())
@@ -55,13 +55,13 @@ public struct CustomImportView: View {
             }
             
             VStack(alignment: .leading, spacing: 6) {
-                Text("💡 Pro-Tips for Older Macs:")
+                Text("💡 Pro-Tips for Wallpaper Formats:")
                     .font(.subheadline)
                     .fontWeight(.semibold)
-                Text("• 1080p H.264 MP4 videos will consume less than 2% CPU on Intel Core i5/i7 Macs.")
+                Text("• Photos (PNG, JPG, HEIC) use zero decode overhead and crisp Retina scaling.")
                     .font(.caption)
                     .foregroundColor(.secondary)
-                Text("• Shorter loop durations (5 to 30 seconds) conserve RAM and decode cache.")
+                Text("• 60 FPS H.264 MP4 videos will match your Mac's screen refresh rate.")
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
@@ -81,11 +81,15 @@ public struct CustomImportView: View {
             UTType.mpeg4Movie,
             UTType.quickTimeMovie,
             UTType.gif,
-            UTType.movie
+            UTType.movie,
+            UTType.image,
+            UTType.jpeg,
+            UTType.png,
+            UTType.heic
         ]
         
         if panel.runModal() == .OK, let url = panel.url {
-            importVideo(from: url)
+            importMedia(from: url)
         }
     }
     
@@ -94,16 +98,16 @@ public struct CustomImportView: View {
         _ = provider.loadObject(ofClass: URL.self) { url, _ in
             guard let fileURL = url else { return }
             DispatchQueue.main.async {
-                self.importVideo(from: fileURL)
+                self.importMedia(from: fileURL)
             }
         }
     }
     
-    private func importVideo(from url: URL) {
-        if let item = store.importCustomVideo(from: url) {
-            statusMessage = "Successfully imported & applied '\(item.title)'!"
+    private func importMedia(from url: URL) {
+        if let item = store.importCustomMedia(from: url) {
+            statusMessage = "✓ Successfully imported & applied '\(item.title)'!"
         } else {
-            statusMessage = "Failed to import video. Please check file format."
+            statusMessage = "Failed to import file. Please check format."
         }
     }
 }

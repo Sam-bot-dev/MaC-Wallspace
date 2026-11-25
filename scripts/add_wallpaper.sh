@@ -2,7 +2,8 @@
 set -euo pipefail
 
 if [ "$#" -lt 1 ]; then
-    echo "Usage: $0 <path_to_video.mp4|mov|gif>"
+    echo "Usage: $0 <path_to_video_or_photo>"
+    echo "Supported formats: mp4, mov, gif, png, jpg, jpeg, heic, webp"
     exit 1
 fi
 
@@ -28,4 +29,4 @@ cp "$SOURCE_FILE" "$TARGET_PATH"
 echo "✓ Added to: $TARGET_PATH"
 echo "==> Launching MaC Wallspace to apply..."
 open -a "Mac Wallspace" 2>/dev/null || open "dist/Mac Wallspace.app" 2>/dev/null || true
-echo "✓ Done! Your wallpaper is now ready in MaC Wallspace."
+echo "✓ Done! Your wallpaper is now active in MaC Wallspace."

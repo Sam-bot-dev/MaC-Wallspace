@@ -84,30 +84,58 @@ public final class WallpaperStore: ObservableObject {
         }
     }
     
+    public func resetToDefault() {
+        let defaultId = UUID(uuidString: "00000000-0000-0000-0000-000000000003")!
+        if let defaultItem = wallpapers.first(where: { $0.id == defaultId && $0.isDownloaded }) {
+            setActiveWallpaper(defaultItem)
+        } else if let first = wallpapers.first(where: { $0.isDownloaded }) {
+            setActiveWallpaper(first)
+        }
+    }
+    
     public func setActiveWallpaper(_ item: WallpaperItem) {
         guard item.isDownloaded, let _ = item.localFileURL else { return }
         self.activeWallpaper = item
         AppSettings.shared.currentWallpaperId = item.id.uuidString
+        AppSettings.shared.isPausedByUser = false
         NotificationCenter.default.post(name: .macWallspaceDidChangeWallpaper, object: item)
     }
     
-    public static func generateThumbnail(for videoURL: URL, destination: URL) {
-        let asset = AVURLAsset(url: videoURL)
-        let generator = AVAssetImageGenerator(asset: asset)
-        generator.appliesPreferredTrackTransform = true
-        generator.maximumSize = CGSize(width: 640, height: 360)
+    public static func generateThumbnail(for mediaURL: URL, destination: URL) {
+        let ext = mediaURL.pathExtension.lowercased()
+        let imageExtensions = ["jpg", "jpeg", "png", "heic", "webp", "bmp", "tiff"]
         
-        let time = CMTime(seconds: 0.5, preferredTimescale: 600)
-        if let cgImage = try? generator.copyCGImage(at: time, actualTime: nil) {
-            let bitmapRep = NSBitmapImageRep(cgImage: cgImage)
-            if let jpegData = bitmapRep.representation(using: .jpeg, properties: [:]) {
-                try? jpegData.write(to: destination)
+        if imageExtensions.contains(ext) {
+            // Photo thumbnail
+            if let image = NSImage(contentsOf: mediaURL),
+               let tiff = image.tiffRepresentation,
+               let rep = NSBitmapImageRep(data: tiff),
+               let jpeg = rep.representation(using: .jpeg, properties: [:]) {
+                try? jpeg.write(to: destination)
+            }
+        } else {
+            // Video frame thumbnail
+            let asset = AVURLAsset(url: mediaURL)
+            let generator = AVAssetImageGenerator(asset: asset)
+            generator.appliesPreferredTrackTransform = true
+            generator.maximumSize = CGSize(width: 640, height: 360)
+            
+            let time = CMTime(seconds: 0.5, preferredTimescale: 600)
+            if let cgImage = try? generator.copyCGImage(at: time, actualTime: nil) {
+                let bitmapRep = NSBitmapImageRep(cgImage: cgImage)
+                if let jpegData = bitmapRep.representation(using: .jpeg, properties: [:]) {
+                    try? jpegData.write(to: destination)
+                }
             }
         }
     }
     
-    public func importCustomVideo(from sourceURL: URL, title: String? = nil) -> WallpaperItem? {
+    public func importCustomMedia(from sourceURL: URL, title: String? = nil) -> WallpaperItem? {
         let filename = sourceURL.lastPathComponent
+        let ext = sourceURL.pathExtension.lowercased()
+        let imageExtensions = ["jpg", "jpeg", "png", "heic", "webp", "bmp", "tiff"]
+        let isImage = imageExtensions.contains(ext)
+        
         let itemId = UUID()
         let targetFileName = "\(itemId.uuidString)_\(filename)"
         let targetURL = Self.wallpapersDirectory.appendingPathComponent(targetFileName)
@@ -121,25 +149,33 @@ public final class WallpaperStore: ObservableObject {
             let fileSize = (try? FileManager.default.attributesOfItem(atPath: targetURL.path)[.size] as? Double) ?? 0.0
             let fileSizeMB = fileSize / (1024 * 1024)
             
-            // Generate real thumbnail from the video frame
             let thumbFileName = "\(itemId.uuidString).jpg"
             let thumbURL = Self.thumbnailsDirectory.appendingPathComponent(thumbFileName)
             Self.generateThumbnail(for: targetURL, destination: thumbURL)
             
-            // Detect resolution if possible
-            var detectedRes = "1080p (Custom)"
-            let asset = AVURLAsset(url: targetURL)
-            if let track = asset.tracks(withMediaType: .video).first {
-                let size = track.naturalSize.applying(track.preferredTransform)
-                let w = Int(abs(size.width))
-                let h = Int(abs(size.height))
-                detectedRes = "\(w) × \(h)"
+            var detectedRes = isImage ? "Photo (Retina)" : "Video (Custom)"
+            var category = isImage ? "Photos" : "Custom"
+            
+            if isImage {
+                if let image = NSImage(contentsOf: targetURL) {
+                    let w = Int(image.size.width)
+                    let h = Int(image.size.height)
+                    detectedRes = "\(w) × \(h)"
+                }
+            } else {
+                let asset = AVURLAsset(url: targetURL)
+                if let track = asset.tracks(withMediaType: .video).first {
+                    let size = track.naturalSize.applying(track.preferredTransform)
+                    let w = Int(abs(size.width))
+                    let h = Int(abs(size.height))
+                    detectedRes = "\(w) × \(h)"
+                }
             }
             
             let item = WallpaperItem(
                 id: itemId,
                 title: title ?? sourceURL.deletingPathExtension().lastPathComponent,
-                category: "Custom",
+                category: category,
                 resolution: detectedRes,
                 fileSizeMB: round(fileSizeMB * 10) / 10,
                 thumbnailUrl: thumbURL.path,
@@ -147,7 +183,7 @@ public final class WallpaperStore: ObservableObject {
                 localFileName: targetFileName,
                 isCustom: true,
                 dateAdded: Date(),
-                author: "My Live Wallpapers"
+                author: isImage ? "My Photo Wallpaper" : "My Live Wallpaper"
             )
             
             wallpapers.insert(item, at: 0)
@@ -157,9 +193,13 @@ public final class WallpaperStore: ObservableObject {
             setActiveWallpaper(item)
             return item
         } catch {
-            print("Failed to import custom video: \(error)")
+            print("Failed to import custom media: \(error)")
             return nil
         }
+    }
+    
+    public func importCustomVideo(from sourceURL: URL, title: String? = nil) -> WallpaperItem? {
+        return importCustomMedia(from: sourceURL, title: title)
     }
     
     public func deleteWallpaper(_ item: WallpaperItem) {
@@ -182,9 +222,7 @@ public final class WallpaperStore: ObservableObject {
         if activeWallpaper?.id == item.id {
             activeWallpaper = nil
             AppSettings.shared.currentWallpaperId = nil
-            if let next = wallpapers.first(where: { $0.isDownloaded }) {
-                setActiveWallpaper(next)
-            }
+            resetToDefault()
         }
     }
 }

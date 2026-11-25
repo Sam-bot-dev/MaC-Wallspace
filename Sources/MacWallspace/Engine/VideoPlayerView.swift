@@ -9,6 +9,7 @@ public final class VideoPlayerView: NSView {
     
     private var currentURL: URL?
     private var isPlaying: Bool = false
+    private var isStaticImage: Bool = false
     
     public override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
@@ -23,9 +24,7 @@ public final class VideoPlayerView: NSView {
     private func setupLayer() {
         wantsLayer = true
         layer?.backgroundColor = NSColor.black.cgColor
-        // Enable hardware-accelerated asynchronous layer compositing for buttery 60fps
         layer?.drawsAsynchronously = true
-        // Disable CoreAnimation action lookups for zero frame-drop rendering
         layer?.actions = [
             "contents": NSNull(),
             "bounds": NSNull(),
@@ -42,7 +41,7 @@ public final class VideoPlayerView: NSView {
         CATransaction.commit()
     }
     
-    public func loadVideo(url: URL) {
+    public func loadMedia(url: URL) {
         guard currentURL != url else {
             resume()
             return
@@ -51,12 +50,40 @@ public final class VideoPlayerView: NSView {
         cleanup()
         self.currentURL = url
         
+        let ext = url.pathExtension.lowercased()
+        let imageExtensions = ["jpg", "jpeg", "png", "heic", "webp", "bmp", "tiff"]
+        
+        if imageExtensions.contains(ext) {
+            // Static Photo Wallpaper Mode (0.0% CPU)
+            loadPhoto(url: url)
+        } else {
+            // Live Video Wallpaper Mode (Hardware-Accelerated 60 FPS)
+            loadVideo(url: url)
+        }
+    }
+    
+    private func loadPhoto(url: URL) {
+        self.isStaticImage = true
+        guard let image = NSImage(contentsOf: url),
+              let cgImage = image.cgImage(forProposedRect: nil, context: nil, hints: nil) else {
+            return
+        }
+        
+        CATransaction.begin()
+        CATransaction.setDisableActions(true)
+        layer?.contents = cgImage
+        layer?.contentsGravity = (AppSettings.shared.scaleMode == "aspectFit") ? .resizeAspect : .resizeAspectFill
+        CATransaction.commit()
+    }
+    
+    private func loadVideo(url: URL) {
+        self.isStaticImage = false
+        layer?.contents = nil
+        
         let asset = AVURLAsset(url: url, options: [
             AVURLAssetPreferPreciseDurationAndTimingKey: true
         ])
         let playerItem = AVPlayerItem(asset: asset)
-        
-        // Optimize buffering and decode pipeline for 60fps smooth playback
         playerItem.preferredForwardBufferDuration = 3.0
         
         let queuePlayer = AVQueuePlayer(playerItem: playerItem)
@@ -64,24 +91,21 @@ public final class VideoPlayerView: NSView {
         queuePlayer.automaticallyWaitsToMinimizeStalling = false
         queuePlayer.preventsDisplaySleepDuringVideoPlayback = false
         
-        // AVPlayerLooper provides seamless, zero-gap hardware looping
         self.playerLooper = AVPlayerLooper(player: queuePlayer, templateItem: playerItem)
         
-        let layer = AVPlayerLayer(player: queuePlayer)
-        layer.frame = bounds
-        layer.videoGravity = (AppSettings.shared.scaleMode == "aspectFit") ? .resizeAspect : .resizeAspectFill
-        layer.autoresizingMask = [.layerWidthSizable, .layerHeightSizable]
-        
-        // Enable asynchronous GPU drawing on the player layer
-        layer.drawsAsynchronously = true
-        layer.actions = [
+        let vLayer = AVPlayerLayer(player: queuePlayer)
+        vLayer.frame = bounds
+        vLayer.videoGravity = (AppSettings.shared.scaleMode == "aspectFit") ? .resizeAspect : .resizeAspectFill
+        vLayer.autoresizingMask = [.layerWidthSizable, .layerHeightSizable]
+        vLayer.drawsAsynchronously = true
+        vLayer.actions = [
             "contents": NSNull(),
             "bounds": NSNull(),
             "position": NSNull()
         ]
         
-        self.layer?.addSublayer(layer)
-        self.playerLayer = layer
+        self.layer?.addSublayer(vLayer)
+        self.playerLayer = vLayer
         self.player = queuePlayer
         
         applyAudioSettings()
@@ -93,17 +117,22 @@ public final class VideoPlayerView: NSView {
     }
     
     public func pause() {
-        player?.pause()
-        isPlaying = false
+        if !isStaticImage {
+            player?.pause()
+            isPlaying = false
+        }
     }
     
     public func resume() {
         guard !AppSettings.shared.isPausedByUser else { return }
-        player?.play()
-        isPlaying = true
+        if !isStaticImage {
+            player?.play()
+            isPlaying = true
+        }
     }
     
     public func applyAudioSettings() {
+        guard !isStaticImage else { return }
         if AppSettings.shared.isMuted {
             player?.volume = 0.0
             player?.isMuted = true
@@ -124,8 +153,10 @@ public final class VideoPlayerView: NSView {
         player = nil
         playerLayer?.removeFromSuperlayer()
         playerLayer = nil
+        layer?.contents = nil
         currentURL = nil
         isPlaying = false
+        isStaticImage = false
     }
     
     deinit {
