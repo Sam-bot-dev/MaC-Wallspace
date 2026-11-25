@@ -156,20 +156,37 @@ MaC-Wallspace includes a built-in playlist engine that lets you organize and cyc
 
 ## 6. Pre-Installed & Omarchy Wallpapers with Live Previews
 
-MaC-Wallspace includes curated high-definition 4K & 1080p live loops and Retina static wallpapers out-of-the-box, with full attribution to [**Omarchy** (`dharmx/walls`)](https://github.com/dharmx/walls):
+MaC-Wallspace includes curated high-definition 4K & 1080p live loops and Retina static wallpapers out-of-the-box, with full attribution to [**Omarchy** (`dharmx/walls`)](https://github.com/dharmx/walls).
 
-| Wallpaper Title | Theme / Style | Resolution & Format | Preview |
+### 🖼️ Featured Community Wallpapers (Click Any Image to View Full Size)
+
+<p align="center">
+  <a href="docs/previews/preview_ichigo_manga.jpg"><img src="docs/previews/preview_ichigo_manga.jpg" width="48%" alt="Bleach Manga Ichigo Slash"></a>
+  <a href="docs/previews/preview_cat_maid_logo.jpg"><img src="docs/previews/preview_cat_maid_logo.jpg" width="48%" alt="Anime Cat Maid Logo"></a>
+</p>
+<p align="center">
+  <a href="docs/previews/preview_bunny_chick.jpg"><img src="docs/previews/preview_bunny_chick.jpg" width="48%" alt="Chillop Bunny and Chick"></a>
+  <a href="docs/previews/preview_lofi_headphones.jpg"><img src="docs/previews/preview_lofi_headphones.jpg" width="48%" alt="Lo-Fi Mindscape Headphones"></a>
+</p>
+
+### 🎬 Curated Live & Static Wallpapers
+
+| Wallpaper Title | Theme / Style | Resolution & Format | Preview (Click to Enlarge) |
 | :--- | :--- | :--- | :---: |
-| **Totoro Starry Night** | Studio Ghibli / Anime | 4K UHD 60 FPS Video Loop | <img src="docs/previews/preview_totoro.jpg" width="260" alt="Totoro Starry Night"> |
-| **Bocchi The Rock (Train)** | Anime & Cozy | 4K UHD 24 FPS Video Loop | <img src="docs/previews/preview_bocchi.jpg" width="260" alt="Bocchi The Rock"> |
-| **Outrun Sunset Skyline** | Synthwave / Retro City | 4.6K Ultra-HD Retina Photo | <img src="docs/previews/preview_outrun_sunset.jpg" width="260" alt="Outrun Sunset"> |
-| **Sakura Katana Blade** | Anime & Action | 4K UHD 60 FPS Video Loop | <img src="docs/previews/preview_sakura_blade.jpg" width="260" alt="Sakura Blade"> |
-| **Berserk Manga Eclipse** | Dark Anime / Manga | 1080p 60 FPS Video Loop | <img src="docs/previews/preview_berserk.jpg" width="260" alt="Berserk Eclipse"> |
-| **Celestial Light Veil** | Monochrome Chiaroscuro | 1080p 60 FPS Video Loop | <img src="docs/previews/preview_celestial_veil.jpg" width="260" alt="Celestial Veil"> |
-| **Sailor Moon Window** | Retro 90s Aesthetic | 1080p Animated Loop | <img src="docs/previews/preview_sailor_moon.jpg" width="260" alt="Sailor Moon Window"> |
-| **Monochrome Ocean Waves** | Minimalist Nature | Retina Ultra-HD Photo | <img src="docs/previews/preview_waves_monochrome.jpg" width="260" alt="Monochrome Waves"> |
-| **Spy x Family (Yor Forger)** | Anime Action | 1080p 60 FPS Video Loop | <img src="docs/previews/preview_yor_forger.jpg" width="260" alt="Yor Forger"> |
-| **Darling in the Franxx (Zero Two)** | Anime Dynamic | 1080p 60 FPS Video Loop | <img src="docs/previews/preview_zero_two.jpg" width="260" alt="Zero Two"> |
+| **Bleach Manga (Ichigo)** | Manga / Shonen | Retina Ultra-HD Photo | <a href="docs/previews/preview_ichigo_manga.jpg"><img src="docs/previews/preview_ichigo_manga.jpg" width="240" alt="Bleach Manga"></a> |
+| **Anime Cat Maid Logo** | Minimal Anime Logo | Retina 1080p Photo | <a href="docs/previews/preview_cat_maid_logo.jpg"><img src="docs/previews/preview_cat_maid_logo.jpg" width="240" alt="Cat Maid"></a> |
+| **Chillop Bunny & Chick** | Cozy & Cute | Retina Pastel Photo | <a href="docs/previews/preview_bunny_chick.jpg"><img src="docs/previews/preview_bunny_chick.jpg" width="240" alt="Bunny & Chick"></a> |
+| **Lo-Fi Headphones** | Lo-Fi / Chillop | Retina Art Photo | <a href="docs/previews/preview_lofi_headphones.jpg"><img src="docs/previews/preview_lofi_headphones.jpg" width="240" alt="Lo-Fi Headphones"></a> |
+| **Totoro Starry Night** | Studio Ghibli / Anime | 4K UHD 60 FPS Video Loop | <a href="docs/previews/preview_totoro.jpg"><img src="docs/previews/preview_totoro.jpg" width="240" alt="Totoro Starry Night"></a> |
+| **Bocchi The Rock (Train)** | Anime & Cozy | 4K UHD 24 FPS Video Loop | <a href="docs/previews/preview_bocchi.jpg"><img src="docs/previews/preview_bocchi.jpg" width="240" alt="Bocchi The Rock"></a> |
+| **Outrun Sunset Skyline** | Synthwave / Retro City | 4.6K Ultra-HD Retina Photo | <a href="docs/previews/preview_outrun_sunset.jpg"><img src="docs/previews/preview_outrun_sunset.jpg" width="240" alt="Outrun Sunset"></a> |
+| **Sakura Katana Blade** | Anime & Action | 4K UHD 60 FPS Video Loop | <a href="docs/previews/preview_sakura_blade.jpg"><img src="docs/previews/preview_sakura_blade.jpg" width="240" alt="Sakura Blade"></a> |
+| **Berserk Manga Eclipse** | Dark Anime / Manga | 1080p 60 FPS Video Loop | <a href="docs/previews/preview_berserk.jpg"><img src="docs/previews/preview_berserk.jpg" width="240" alt="Berserk Eclipse"></a> |
+| **Celestial Light Veil** | Monochrome Chiaroscuro | 1080p 60 FPS Video Loop | <a href="docs/previews/preview_celestial_veil.jpg"><img src="docs/previews/preview_celestial_veil.jpg" width="240" alt="Celestial Veil"></a> |
+| **Sailor Moon Window** | Retro 90s Aesthetic | 1080p Animated Loop | <a href="docs/previews/preview_sailor_moon.jpg"><img src="docs/previews/preview_sailor_moon.jpg" width="240" alt="Sailor Moon Window"></a> |
+| **Monochrome Ocean Waves** | Minimalist Nature | Retina Ultra-HD Photo | <a href="docs/previews/preview_waves_monochrome.jpg"><img src="docs/previews/preview_waves_monochrome.jpg" width="240" alt="Monochrome Waves"></a> |
+| **Spy x Family (Yor Forger)** | Anime Action | 1080p 60 FPS Video Loop | <a href="docs/previews/preview_yor_forger.jpg"><img src="docs/previews/preview_yor_forger.jpg" width="240" alt="Yor Forger"></a> |
+| **Darling in the Franxx (Zero Two)** | Anime Dynamic | 1080p 60 FPS Video Loop | <a href="docs/previews/preview_zero_two.jpg"><img src="docs/previews/preview_zero_two.jpg" width="240" alt="Zero Two"></a> |
 
 ---
 
