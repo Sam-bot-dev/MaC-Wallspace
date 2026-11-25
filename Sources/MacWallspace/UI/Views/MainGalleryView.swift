@@ -26,6 +26,7 @@ public enum MainTab: String, CaseIterable, Identifiable {
 
 public struct MainGalleryView: View {
     @State private var selectedTab: MainTab = .gallery
+    @State private var categoryScrollTarget: String = "All"
     @ObservedObject var store = WallpaperStore.shared
     @ObservedObject var settings = AppSettings.shared
     @ObservedObject var windowManager = DesktopWindowManager.shared
@@ -223,26 +224,77 @@ public struct MainGalleryView: View {
     @ViewBuilder
     private var gallerySection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            // Category Filter Bar
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 8) {
-                    ForEach(availableCategories, id: \.self) { cat in
-                        Button(action: {
-                            settings.selectedCategory = cat
-                        }) {
-                            Text(cat)
-                                .font(.caption)
-                                .fontWeight(settings.selectedCategory == cat ? .bold : .medium)
-                                .padding(.horizontal, 12)
-                                .padding(.vertical, 6)
-                                .background(settings.selectedCategory == cat ? Color.green : Color(red: 0.10, green: 0.10, blue: 0.12))
-                                .foregroundColor(settings.selectedCategory == cat ? .black : .white)
-                                .cornerRadius(16)
+            // Category Filter Bar with Left/Right Arrows & Horizontal Scrollbar
+            ScrollViewReader { proxy in
+                HStack(spacing: 6) {
+                    // Left Arrow Button
+                    Button(action: {
+                        let cats = availableCategories
+                        let currentIdx = cats.firstIndex(of: categoryScrollTarget) ?? 0
+                        let prevIdx = max(0, currentIdx - 3)
+                        categoryScrollTarget = cats[prevIdx]
+                        withAnimation(.easeInOut(duration: 0.25)) {
+                            proxy.scrollTo(categoryScrollTarget, anchor: .leading)
                         }
-                        .buttonStyle(PlainButtonStyle())
+                    }) {
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 11, weight: .bold))
+                            .foregroundColor(.white)
+                            .frame(width: 28, height: 28)
+                            .background(Color(red: 0.16, green: 0.16, blue: 0.20))
+                            .clipShape(Circle())
                     }
+                    .buttonStyle(PlainButtonStyle())
+                    .help("Scroll left")
+                    
+                    ScrollView(.horizontal, showsIndicators: true) {
+                        HStack(spacing: 8) {
+                            ForEach(availableCategories, id: \.self) { cat in
+                                Button(action: {
+                                    settings.selectedCategory = cat
+                                    categoryScrollTarget = cat
+                                    withAnimation(.easeInOut(duration: 0.25)) {
+                                        proxy.scrollTo(cat, anchor: .center)
+                                    }
+                                }) {
+                                    Text(cat)
+                                        .font(.caption)
+                                        .fontWeight(settings.selectedCategory == cat ? .bold : .medium)
+                                        .padding(.horizontal, 12)
+                                        .padding(.vertical, 6)
+                                        .background(settings.selectedCategory == cat ? Color.green : Color(red: 0.12, green: 0.12, blue: 0.15))
+                                        .foregroundColor(settings.selectedCategory == cat ? .black : .white)
+                                        .cornerRadius(16)
+                                }
+                                .buttonStyle(PlainButtonStyle())
+                                .id(cat)
+                            }
+                        }
+                        .padding(.vertical, 4)
+                        .padding(.horizontal, 4)
+                    }
+                    
+                    // Right Arrow Button
+                    Button(action: {
+                        let cats = availableCategories
+                        let currentIdx = cats.firstIndex(of: categoryScrollTarget) ?? 0
+                        let nextIdx = min(cats.count - 1, currentIdx + 3)
+                        categoryScrollTarget = cats[nextIdx]
+                        withAnimation(.easeInOut(duration: 0.25)) {
+                            proxy.scrollTo(categoryScrollTarget, anchor: .trailing)
+                        }
+                    }) {
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 11, weight: .bold))
+                            .foregroundColor(.white)
+                            .frame(width: 28, height: 28)
+                            .background(Color(red: 0.16, green: 0.16, blue: 0.20))
+                            .clipShape(Circle())
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                    .help("Scroll right")
                 }
-                .padding(.horizontal, 20)
+                .padding(.horizontal, 16)
             }
             .padding(.top, 10)
             

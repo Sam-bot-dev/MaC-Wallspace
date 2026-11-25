@@ -5,6 +5,7 @@ public struct PlaylistView: View {
     @ObservedObject var store = WallpaperStore.shared
     
     @State private var selectedPlaylistId: UUID = PlaylistManager.defaultPlaylistId
+    @State private var playlistScrollTarget: UUID?
     @State private var isCreatingNewPlaylist: Bool = false
     @State private var newPlaylistName: String = ""
     @State private var showAddWallpapersSheet: Bool = false
@@ -21,46 +22,98 @@ public struct PlaylistView: View {
     public var body: some View {
         VStack(spacing: 0) {
             // Top Playlist Selector Bar with Scroll Arrows & Scrollbar
-            HStack(spacing: 10) {
+            HStack(spacing: 8) {
                 ScrollViewReader { proxy in
-                    ScrollView(.horizontal, showsIndicators: true) {
-                        HStack(spacing: 8) {
-                            ForEach(playlistManager.playlists) { playlist in
-                                let isSelected = (playlist.id == selectedPlaylistId)
-                                let isActive = (playlist.id == playlistManager.activePlaylistId)
-                                
-                                Button(action: {
-                                    selectedPlaylistId = playlist.id
-                                }) {
-                                    HStack(spacing: 6) {
-                                        if isActive {
-                                            Circle()
-                                                .fill(Color.green)
-                                                .frame(width: 6, height: 6)
-                                        }
-                                        Text(playlist.name)
-                                            .fontWeight(isSelected ? .bold : .medium)
-                                            .lineLimit(1)
-                                        Text("(\(playlist.itemIds.count))")
-                                            .font(.caption)
-                                            .foregroundColor(isSelected ? .green : .secondary)
-                                    }
-                                    .padding(.horizontal, 14)
-                                    .padding(.vertical, 7)
-                                    .background(isSelected ? Color.green.opacity(0.2) : Color.white.opacity(0.06))
-                                    .foregroundColor(isSelected ? .green : .white)
-                                    .cornerRadius(8)
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 8)
-                                            .stroke(isSelected ? Color.green.opacity(0.6) : Color.white.opacity(0.12), lineWidth: 1)
-                                    )
-                                }
-                                .buttonStyle(PlainButtonStyle())
-                                .id(playlist.id)
+                    HStack(spacing: 6) {
+                        // Left Arrow Button
+                        Button(action: {
+                            let playlists = playlistManager.playlists
+                            guard !playlists.isEmpty else { return }
+                            let currentTarget = playlistScrollTarget ?? selectedPlaylistId
+                            let currentIdx = playlists.firstIndex(where: { $0.id == currentTarget }) ?? 0
+                            let prevIdx = max(0, currentIdx - 2)
+                            let targetId = playlists[prevIdx].id
+                            playlistScrollTarget = targetId
+                            withAnimation(.easeInOut(duration: 0.25)) {
+                                proxy.scrollTo(targetId, anchor: .leading)
                             }
+                        }) {
+                            Image(systemName: "chevron.left")
+                                .font(.system(size: 10, weight: .bold))
+                                .foregroundColor(.white)
+                                .frame(width: 24, height: 24)
+                                .background(Color(red: 0.18, green: 0.18, blue: 0.22))
+                                .clipShape(Circle())
                         }
-                        .padding(.vertical, 4)
-                        .padding(.horizontal, 2)
+                        .buttonStyle(PlainButtonStyle())
+                        .help("Scroll playlists left")
+                        
+                        ScrollView(.horizontal, showsIndicators: true) {
+                            HStack(spacing: 8) {
+                                ForEach(playlistManager.playlists) { playlist in
+                                    let isSelected = (playlist.id == selectedPlaylistId)
+                                    let isActive = (playlist.id == playlistManager.activePlaylistId)
+                                    
+                                    Button(action: {
+                                        selectedPlaylistId = playlist.id
+                                        playlistScrollTarget = playlist.id
+                                        withAnimation(.easeInOut(duration: 0.25)) {
+                                            proxy.scrollTo(playlist.id, anchor: .center)
+                                        }
+                                    }) {
+                                        HStack(spacing: 6) {
+                                            if isActive {
+                                                Circle()
+                                                    .fill(Color.green)
+                                                    .frame(width: 6, height: 6)
+                                            }
+                                            Text(playlist.name)
+                                                .fontWeight(isSelected ? .bold : .medium)
+                                                .lineLimit(1)
+                                            Text("(\(playlist.itemIds.count))")
+                                                .font(.caption)
+                                                .foregroundColor(isSelected ? .green : .secondary)
+                                        }
+                                        .padding(.horizontal, 14)
+                                        .padding(.vertical, 7)
+                                        .background(isSelected ? Color.green.opacity(0.2) : Color.white.opacity(0.06))
+                                        .foregroundColor(isSelected ? .green : .white)
+                                        .cornerRadius(8)
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 8)
+                                                .stroke(isSelected ? Color.green.opacity(0.6) : Color.white.opacity(0.12), lineWidth: 1)
+                                        )
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
+                                    .id(playlist.id)
+                                }
+                            }
+                            .padding(.vertical, 4)
+                            .padding(.horizontal, 2)
+                        }
+                        
+                        // Right Arrow Button
+                        Button(action: {
+                            let playlists = playlistManager.playlists
+                            guard !playlists.isEmpty else { return }
+                            let currentTarget = playlistScrollTarget ?? selectedPlaylistId
+                            let currentIdx = playlists.firstIndex(where: { $0.id == currentTarget }) ?? 0
+                            let nextIdx = min(playlists.count - 1, currentIdx + 2)
+                            let targetId = playlists[nextIdx].id
+                            playlistScrollTarget = targetId
+                            withAnimation(.easeInOut(duration: 0.25)) {
+                                proxy.scrollTo(targetId, anchor: .trailing)
+                            }
+                        }) {
+                            Image(systemName: "chevron.right")
+                                .font(.system(size: 10, weight: .bold))
+                                .foregroundColor(.white)
+                                .frame(width: 24, height: 24)
+                                .background(Color(red: 0.18, green: 0.18, blue: 0.22))
+                                .clipShape(Circle())
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                        .help("Scroll playlists right")
                     }
                 }
                 
