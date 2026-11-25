@@ -5,8 +5,8 @@ public final class AppDelegate: NSObject, NSApplicationDelegate {
         // Run as accessory app (menu bar icon without occupying Dock space)
         NSApp.setActivationPolicy(.accessory)
         
-        // Ensure default offline sample exists for immediate out-of-the-box readiness
-        SampleVideoGenerator.ensureDefaultOfflineWallpaperExists()
+        // Ensure default offline sample live wallpapers exist
+        SampleVideoGenerator.ensureDefaultOfflineWallpapersExist()
         
         // Setup menu bar item
         MenuBarController.shared.setup()

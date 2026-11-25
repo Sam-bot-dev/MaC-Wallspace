@@ -53,6 +53,13 @@ public struct WallpaperCardView: View {
         downloader.downloadProgress[item.id] ?? 0.0
     }
     
+    private var thumbnailImage: NSImage? {
+        if let path = item.thumbnailUrl, FileManager.default.fileExists(atPath: path) {
+            return NSImage(contentsOfFile: path)
+        }
+        return nil
+    }
+    
     public var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             // Thumbnail / Preview Box
@@ -61,15 +68,26 @@ public struct WallpaperCardView: View {
                     .fill(Color(NSColor.controlBackgroundColor))
                     .frame(height: 140)
                     .overlay(
-                        VStack(spacing: 8) {
-                            Image(systemName: iconForCategory(item.category))
-                                .font(.system(size: 32))
-                                .foregroundColor(.accentColor)
-                            Text(item.title)
-                                .font(.headline)
-                                .lineLimit(1)
-                                .multilineTextAlignment(.center)
-                                .padding(.horizontal, 8)
+                        Group {
+                            if let img = thumbnailImage {
+                                Image(nsImage: img)
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(height: 140)
+                                    .clipped()
+                                    .cornerRadius(10)
+                            } else {
+                                VStack(spacing: 8) {
+                                    Image(systemName: iconForCategory(item.category))
+                                        .font(.system(size: 32))
+                                        .foregroundColor(.accentColor)
+                                    Text(item.title)
+                                        .font(.headline)
+                                        .lineLimit(1)
+                                        .multilineTextAlignment(.center)
+                                        .padding(.horizontal, 8)
+                                }
+                            }
                         }
                     )
                 

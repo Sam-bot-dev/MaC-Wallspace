@@ -1,5 +1,7 @@
 import Foundation
 import Combine
+import AVFoundation
+import Cocoa
 
 public final class WallpaperStore: ObservableObject {
     public static let shared = WallpaperStore()
@@ -15,6 +17,14 @@ public final class WallpaperStore: ObservableObject {
     
     public static var wallpapersDirectory: URL {
         let dir = appSupportDirectory.appendingPathComponent("Wallpapers", isDirectory: true)
+        if !FileManager.default.fileExists(atPath: dir.path) {
+            try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        }
+        return dir
+    }
+    
+    public static var thumbnailsDirectory: URL {
+        let dir = appSupportDirectory.appendingPathComponent("Thumbnails", isDirectory: true)
         if !FileManager.default.fileExists(atPath: dir.path) {
             try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
         }
@@ -81,9 +91,25 @@ public final class WallpaperStore: ObservableObject {
         NotificationCenter.default.post(name: .macWallspaceDidChangeWallpaper, object: item)
     }
     
+    public static func generateThumbnail(for videoURL: URL, destination: URL) {
+        let asset = AVURLAsset(url: videoURL)
+        let generator = AVAssetImageGenerator(asset: asset)
+        generator.appliesPreferredTrackTransform = true
+        generator.maximumSize = CGSize(width: 640, height: 360)
+        
+        let time = CMTime(seconds: 0.5, preferredTimescale: 600)
+        if let cgImage = try? generator.copyCGImage(at: time, actualTime: nil) {
+            let bitmapRep = NSBitmapImageRep(cgImage: cgImage)
+            if let jpegData = bitmapRep.representation(using: .jpeg, properties: [:]) {
+                try? jpegData.write(to: destination)
+            }
+        }
+    }
+    
     public func importCustomVideo(from sourceURL: URL, title: String? = nil) -> WallpaperItem? {
         let filename = sourceURL.lastPathComponent
-        let targetFileName = "\(UUID().uuidString)_\(filename)"
+        let itemId = UUID()
+        let targetFileName = "\(itemId.uuidString)_\(filename)"
         let targetURL = Self.wallpapersDirectory.appendingPathComponent(targetFileName)
         
         do {
@@ -95,21 +121,39 @@ public final class WallpaperStore: ObservableObject {
             let fileSize = (try? FileManager.default.attributesOfItem(atPath: targetURL.path)[.size] as? Double) ?? 0.0
             let fileSizeMB = fileSize / (1024 * 1024)
             
+            // Generate real thumbnail from the video frame
+            let thumbFileName = "\(itemId.uuidString).jpg"
+            let thumbURL = Self.thumbnailsDirectory.appendingPathComponent(thumbFileName)
+            Self.generateThumbnail(for: targetURL, destination: thumbURL)
+            
+            // Detect resolution if possible
+            var detectedRes = "1080p (Custom)"
+            let asset = AVURLAsset(url: targetURL)
+            if let track = asset.tracks(withMediaType: .video).first {
+                let size = track.naturalSize.applying(track.preferredTransform)
+                let w = Int(abs(size.width))
+                let h = Int(abs(size.height))
+                detectedRes = "\(w) × \(h)"
+            }
+            
             let item = WallpaperItem(
-                id: UUID(),
+                id: itemId,
                 title: title ?? sourceURL.deletingPathExtension().lastPathComponent,
                 category: "Custom",
-                resolution: "Original",
+                resolution: detectedRes,
                 fileSizeMB: round(fileSizeMB * 10) / 10,
+                thumbnailUrl: thumbURL.path,
                 videoUrl: targetURL.absoluteString,
                 localFileName: targetFileName,
                 isCustom: true,
                 dateAdded: Date(),
-                author: "Local Import"
+                author: "My Live Wallpapers"
             )
             
             wallpapers.insert(item, at: 0)
             saveCatalog()
+            
+            // Immediately activate on desktop
             setActiveWallpaper(item)
             return item
         } catch {
@@ -122,11 +166,13 @@ public final class WallpaperStore: ObservableObject {
         if let localURL = item.localFileURL {
             try? FileManager.default.removeItem(at: localURL)
         }
+        if let thumbPath = item.thumbnailUrl, FileManager.default.fileExists(atPath: thumbPath) {
+            try? FileManager.default.removeItem(atPath: thumbPath)
+        }
         
         if item.isCustom {
             wallpapers.removeAll(where: { $0.id == item.id })
         } else {
-            // For curated items, mark as not downloaded locally
             if let index = wallpapers.firstIndex(where: { $0.id == item.id }) {
                 wallpapers[index].localFileName = nil
             }
