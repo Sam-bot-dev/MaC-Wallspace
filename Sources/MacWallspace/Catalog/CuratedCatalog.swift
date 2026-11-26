@@ -18,7 +18,7 @@ public struct CuratedCatalog {
     private static let rawBase = "https://raw.githubusercontent.com/dharmx/walls/main"
     
     public static let items: [WallpaperItem] = [
-        // MARK: - Omarchy Live / Animated Video Loops (Each with Distinct Previews)
+        // MARK: - Omarchy Live / Animated Video Loops (100% Unique Previews)
         WallpaperItem(
             id: UUID(uuidString: "a1111111-0000-0000-0000-000000000001")!,
             title: "Anime Sky & Train Station",
@@ -65,7 +65,7 @@ public struct CuratedCatalog {
             category: "Anime",
             resolution: "1080p (60 FPS)",
             fileSizeMB: 27.2,
-            thumbnailUrl: "preview_totoro.jpg",
+            thumbnailUrl: "preview_totoro_rain.jpg",
             videoUrl: "\(rawBase)/animated/totoro-in-the-rain-moewalls-com.mp4",
             author: "Omarchy (dharmx/walls)"
         ),
@@ -105,7 +105,7 @@ public struct CuratedCatalog {
             category: "Anime",
             resolution: "1080p (60 FPS)",
             fileSizeMB: 33.0,
-            thumbnailUrl: "preview_celestial_veil.jpg",
+            thumbnailUrl: "preview_star_wars_ghibli.jpg",
             videoUrl: "\(rawBase)/animated/star-wars-ghibli-style-moewalls-com.mp4",
             author: "Omarchy (dharmx/walls)"
         ),
@@ -115,7 +115,7 @@ public struct CuratedCatalog {
             category: "Minimal",
             resolution: "GIF (0% CPU)",
             fileSizeMB: 0.6,
-            thumbnailUrl: "preview_ichigo_manga.jpg",
+            thumbnailUrl: "preview_fireplace.jpg",
             videoUrl: "\(rawBase)/animated/fireplace.gif",
             author: "Omarchy (dharmx/walls)"
         ),
@@ -125,7 +125,7 @@ public struct CuratedCatalog {
             category: "Minimal",
             resolution: "GIF (0% CPU)",
             fileSizeMB: 2.7,
-            thumbnailUrl: "preview_waves_monochrome.jpg",
+            thumbnailUrl: "preview_moon_pixel.jpg",
             videoUrl: "\(rawBase)/animated/moon.gif",
             author: "Omarchy (dharmx/walls)"
         ),
@@ -135,7 +135,7 @@ public struct CuratedCatalog {
             category: "Anime",
             resolution: "GIF (0% CPU)",
             fileSizeMB: 2.4,
-            thumbnailUrl: "preview_cat_maid_logo.jpg",
+            thumbnailUrl: "preview_city_rain.jpg",
             videoUrl: "\(rawBase)/animated/city.gif",
             author: "Omarchy (dharmx/walls)"
         ),
@@ -145,12 +145,12 @@ public struct CuratedCatalog {
             category: "Minimal",
             resolution: "1080p (Smooth)",
             fileSizeMB: 1.1,
-            thumbnailUrl: "preview_bunny_chick.jpg",
+            thumbnailUrl: "preview_breathe.jpg",
             videoUrl: "\(rawBase)/animated/breathe.mp4",
             author: "Omarchy (dharmx/walls)"
         ),
 
-        // MARK: - Omarchy Outrun & Synthwave Retinas (Unique Image Thumbnails)
+        // MARK: - Omarchy Outrun & Synthwave Retinas (Unique Artwork)
         WallpaperItem(
             id: UUID(uuidString: "b1111111-0000-0000-0000-000000000001")!,
             title: "Outrun Sunset Skyline",
@@ -192,7 +192,7 @@ public struct CuratedCatalog {
             author: "Omarchy (dharmx/walls)"
         ),
 
-        // MARK: - Omarchy Nord & Gruvbox Themes (Unique Image Thumbnails)
+        // MARK: - Omarchy Nord & Gruvbox Themes (Unique Artwork)
         WallpaperItem(
             id: UUID(uuidString: "c1111111-0000-0000-0000-000000000001")!,
             title: "Nordic Mountain Valley",
@@ -224,7 +224,7 @@ public struct CuratedCatalog {
             author: "Omarchy (dharmx/walls)"
         ),
 
-        // MARK: - Omarchy Nature & Minimal Themes (Unique Image Thumbnails)
+        // MARK: - Omarchy Nature & Minimal Themes (Unique Artwork)
         WallpaperItem(
             id: UUID(uuidString: "d1111111-0000-0000-0000-000000000001")!,
             title: "Palm Beach Full Moon",
@@ -256,14 +256,14 @@ public struct CuratedCatalog {
             author: "Omarchy (dharmx/walls)"
         ),
 
-        // MARK: - Built-in Cloud Starter Videos
+        // MARK: - Built-in Cloud Starter Videos (Unique Artwork)
         WallpaperItem(
             id: UUID(uuidString: "11111111-1111-1111-1111-111111111111")!,
             title: "Cosmic Nebula Flow",
             category: "Sci-Fi",
             resolution: "1080p (Optimized)",
             fileSizeMB: 8.4,
-            thumbnailUrl: "preview_celestial_veil.jpg",
+            thumbnailUrl: "preview_cosmic_nebula.jpg",
             videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
             author: "Cosmos Motion Lab"
         ),
@@ -273,7 +273,7 @@ public struct CuratedCatalog {
             category: "Nature",
             resolution: "1080p (Low Power)",
             fileSizeMB: 6.2,
-            thumbnailUrl: "preview_waves_monochrome.jpg",
+            thumbnailUrl: "preview_alpine_forest.jpg",
             videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
             author: "Earth Scenic"
         ),
@@ -283,7 +283,7 @@ public struct CuratedCatalog {
             category: "Sci-Fi",
             resolution: "1080p (Vibrant)",
             fileSizeMB: 12.1,
-            thumbnailUrl: "preview_sakura_blade.jpg",
+            thumbnailUrl: "preview_tokyo_rain.jpg",
             videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
             author: "NeoShinjuku"
         )
