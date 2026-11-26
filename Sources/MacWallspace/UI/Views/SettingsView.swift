@@ -73,6 +73,30 @@ public struct SettingsView: View {
                             .font(.caption)
                             .foregroundColor(.accentColor)
                     }
+                    
+                    Divider()
+                        .padding(.vertical, 4)
+                    
+                    HStack {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Uninstall Application")
+                                .font(.subheadline)
+                                .fontWeight(.semibold)
+                            Text("Deletes all local cache, resets startup hooks, and quits the app so it can be safely moved to Trash.")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                        
+                        Spacer()
+                        
+                        Button(action: {
+                            uninstallApp()
+                        }) {
+                            Text("Uninstall & Quit")
+                                .foregroundColor(.red)
+                        }
+                        .buttonStyle(SecondaryButtonStyle())
+                    }
                 }
                 .padding()
                 .background(Color(NSColor.controlBackgroundColor))
@@ -82,7 +106,7 @@ public struct SettingsView: View {
                 VStack(alignment: .leading, spacing: 8) {
                     Text("About MaC Wallspace")
                         .font(.headline)
-                    Text("Version 1.0.0 (Native Swift & AppKit)")
+                    Text("Version 1.1.0 (Native Swift & AppKit)")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                     Text("Built specifically for older Macs that struggle with or cannot run macOS Sonoma aerial wallpapers or heavy Electron-based live wallpaper apps. Designed for near-zero CPU and battery footprint.")
@@ -114,5 +138,24 @@ public struct SettingsView: View {
         }
         store.loadCatalog()
         cacheClearedMessage = "Cache cleared. Default offline loop preserved."
+    }
+    
+    private func uninstallApp() {
+        let alert = NSAlert()
+        alert.messageText = "Uninstall MaC Wallspace?"
+        alert.informativeText = "This will remove all downloaded wallpapers, reset startup settings, and close the application so you can safely move it to the Trash."
+        alert.alertStyle = .warning
+        alert.addButton(withTitle: "Uninstall & Quit")
+        alert.addButton(withTitle: "Cancel")
+        
+        if alert.runModal() == .alertFirstButtonReturn {
+            LaunchAtLogin.setEnabled(false)
+            DesktopWindowManager.shared.pauseAll()
+            DesktopWindowManager.shared.hideAllWindows()
+            let storeDir = WallpaperStore.wallpapersDirectory.deletingLastPathComponent()
+            try? FileManager.default.removeItem(at: storeDir)
+            UserDefaults.standard.removePersistentDomain(forName: "com.sammy.macwallspace")
+            NSApp.terminate(nil)
+        }
     }
 }

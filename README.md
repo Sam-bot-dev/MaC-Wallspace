@@ -249,9 +249,17 @@ One of the biggest flaws with third-party wallpaper engines (especially Chromium
 
 ### Download Pre-Built Releases
 1. Download the latest release `.dmg` from the [**Releases Page**](https://github.com/Sam-bot-dev/MaC-Wallspace/releases).
-2. Open `Mac-Wallspace-v1.0.0.dmg`.
+2. Open `Mac-Wallspace-v1.1.0.dmg`.
 3. Drag **Mac Wallspace** into your `Applications` folder.
-4. Launch the app — it lives quietly in your menu bar and applies your first live wallpaper immediately!
+4. Launch the app — it opens the gallery window and lives quietly in your menu bar!
+
+### How to Uninstall
+You can uninstall easily at any time:
+- **Inside the App**: Open **Settings** (click menu bar icon → *Open Wallspace Gallery & Settings* → *Settings* tab) and click **Uninstall & Quit**.
+- **Manually**: 
+  1. Click the menu bar icon and select **Quit MaC Wallspace** (or `Cmd + Q`).
+  2. Drag `/Applications/Mac Wallspace.app` to the Trash.
+  3. (Optional clean up) Run `rm -rf ~/Library/Application\ Support/MacWallspace` in Terminal.
 
 ### Build from Source
 Requirements: macOS 11.0+, Swift 5.8+ (Command Line Tools).

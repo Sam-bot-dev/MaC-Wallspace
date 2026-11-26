@@ -5,9 +5,9 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 DIST_DIR="$ROOT_DIR/dist"
 APP_NAME="Mac Wallspace"
 APP_BUNDLE="$DIST_DIR/$APP_NAME.app"
-DMG_NAME="Mac-Wallspace-v1.0.0.dmg"
+DMG_NAME="Mac-Wallspace-v1.1.0.dmg"
 DMG_PATH="$DIST_DIR/$DMG_NAME"
-ZIP_NAME="Mac-Wallspace-v1.0.0-macOS.zip"
+ZIP_NAME="Mac-Wallspace-v1.1.0-macOS.zip"
 ZIP_PATH="$DIST_DIR/$ZIP_NAME"
 
 if [ ! -d "$APP_BUNDLE" ]; then
