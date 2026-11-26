@@ -82,7 +82,13 @@ public final class WallpaperStore: ObservableObject {
         var currentItems = self.wallpapers
         
         for item in curated {
-            if !currentItems.contains(where: { $0.id == item.id || $0.videoUrl == item.videoUrl }) {
+            if let existingIndex = currentItems.firstIndex(where: { $0.id == item.id || $0.videoUrl == item.videoUrl }) {
+                if !currentItems[existingIndex].isCustom {
+                    var updated = item
+                    updated.localFileName = currentItems[existingIndex].localFileName
+                    currentItems[existingIndex] = updated
+                }
+            } else {
                 currentItems.append(item)
             }
         }

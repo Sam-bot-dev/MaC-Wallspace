@@ -41,6 +41,7 @@ public struct WallpaperCardView: View {
     @ObservedObject var store = WallpaperStore.shared
     @ObservedObject var downloader = WallpaperDownloader.shared
     @ObservedObject var playlistManager = PlaylistManager.shared
+    @State private var loadedImage: NSImage? = nil
     
     public init(item: WallpaperItem) {
         self.item = item
@@ -92,6 +93,11 @@ public struct WallpaperCardView: View {
             return NSImage(contentsOfFile: inThumbnails)
         }
         
+        let byId = WallpaperStore.thumbnailsDirectory.appendingPathComponent("\(item.id.uuidString).jpg").path
+        if FileManager.default.fileExists(atPath: byId) {
+            return NSImage(contentsOfFile: byId)
+        }
+        
         // 4. Fallback dev docs preview
         let devFallback = "/Users/sammy/Desktop/Code/MaC-Wallspace/docs/previews/\(path)"
         if FileManager.default.fileExists(atPath: devFallback) {
@@ -101,6 +107,43 @@ public struct WallpaperCardView: View {
         return nil
     }
     
+    private func loadAsyncThumbnail() {
+        if let direct = thumbnailImage {
+            self.loadedImage = direct
+            return
+        }
+        
+        let candidateURL: String? = {
+            if let t = item.thumbnailUrl, t.hasPrefix("http") { return t }
+            let v = item.videoUrl
+            let ext = (URL(string: v)?.pathExtension ?? "").lowercased()
+            if ["jpg", "jpeg", "png", "webp"].contains(ext) && v.hasPrefix("http") {
+                return v
+            }
+            return nil
+        }()
+        
+        guard let urlStr = candidateURL, let url = URL(string: urlStr) else { return }
+        let cachedFile = WallpaperStore.thumbnailsDirectory.appendingPathComponent("\(item.id.uuidString).jpg")
+        
+        if FileManager.default.fileExists(atPath: cachedFile.path), let cached = NSImage(contentsOf: cachedFile) {
+            self.loadedImage = cached
+            return
+        }
+        
+        URLSession.shared.dataTask(with: url) { data, _, _ in
+            guard let data = data, let img = NSImage(data: data) else { return }
+            if let tiff = img.tiffRepresentation,
+               let rep = NSBitmapImageRep(data: tiff),
+               let jpeg = rep.representation(using: .jpeg, properties: [:]) {
+                try? jpeg.write(to: cachedFile)
+            }
+            DispatchQueue.main.async {
+                self.loadedImage = img
+            }
+        }.resume()
+    }
+    
     public var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             // Thumbnail / Preview Box — 100% Contained, Never Spills Out
@@ -108,7 +151,7 @@ public struct WallpaperCardView: View {
                 ZStack {
                     Color(red: 0.04, green: 0.04, blue: 0.05)
                     
-                    if let img = thumbnailImage {
+                    if let img = loadedImage ?? thumbnailImage {
                         Image(nsImage: img)
                             .resizable()
                             .aspectRatio(contentMode: .fit)
@@ -130,6 +173,9 @@ public struct WallpaperCardView: View {
                 .frame(height: 140)
                 .frame(maxWidth: .infinity)
                 .clipShape(RoundedRectangle(cornerRadius: 10))
+                .onAppear {
+                    loadAsyncThumbnail()
+                }
                 
                 // Badges
                 HStack(spacing: 4) {

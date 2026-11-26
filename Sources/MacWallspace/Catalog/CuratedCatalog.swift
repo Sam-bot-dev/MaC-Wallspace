@@ -18,7 +18,7 @@ public struct CuratedCatalog {
     private static let rawBase = "https://raw.githubusercontent.com/dharmx/walls/main"
     
     public static let items: [WallpaperItem] = [
-        // MARK: - Omarchy Live / Animated Video Loops (60 FPS & High Quality)
+        // MARK: - Omarchy Live / Animated Video Loops (Each with Distinct Previews)
         WallpaperItem(
             id: UUID(uuidString: "a1111111-0000-0000-0000-000000000001")!,
             title: "Anime Sky & Train Station",
@@ -115,7 +115,7 @@ public struct CuratedCatalog {
             category: "Minimal",
             resolution: "GIF (0% CPU)",
             fileSizeMB: 0.6,
-            thumbnailUrl: "preview_outrun_sunset.jpg",
+            thumbnailUrl: "preview_ichigo_manga.jpg",
             videoUrl: "\(rawBase)/animated/fireplace.gif",
             author: "Omarchy (dharmx/walls)"
         ),
@@ -135,7 +135,7 @@ public struct CuratedCatalog {
             category: "Anime",
             resolution: "GIF (0% CPU)",
             fileSizeMB: 2.4,
-            thumbnailUrl: "preview_sakura_blade.jpg",
+            thumbnailUrl: "preview_cat_maid_logo.jpg",
             videoUrl: "\(rawBase)/animated/city.gif",
             author: "Omarchy (dharmx/walls)"
         ),
@@ -145,12 +145,12 @@ public struct CuratedCatalog {
             category: "Minimal",
             resolution: "1080p (Smooth)",
             fileSizeMB: 1.1,
-            thumbnailUrl: "preview_celestial_veil.jpg",
+            thumbnailUrl: "preview_bunny_chick.jpg",
             videoUrl: "\(rawBase)/animated/breathe.mp4",
             author: "Omarchy (dharmx/walls)"
         ),
 
-        // MARK: - Omarchy Outrun & Synthwave Retinas
+        // MARK: - Omarchy Outrun & Synthwave Retinas (Unique Image Thumbnails)
         WallpaperItem(
             id: UUID(uuidString: "b1111111-0000-0000-0000-000000000001")!,
             title: "Outrun Sunset Skyline",
@@ -167,7 +167,7 @@ public struct CuratedCatalog {
             category: "Outrun",
             resolution: "Retina 4K (0% CPU)",
             fileSizeMB: 9.3,
-            thumbnailUrl: "preview_outrun_sunset.jpg",
+            thumbnailUrl: "\(rawBase)/outrun/a_sports_car_with_neon_lights.png",
             videoUrl: "\(rawBase)/outrun/a_sports_car_with_neon_lights.png",
             author: "Omarchy (dharmx/walls)"
         ),
@@ -177,7 +177,7 @@ public struct CuratedCatalog {
             category: "Outrun",
             resolution: "Retina HD (0% CPU)",
             fileSizeMB: 0.8,
-            thumbnailUrl: "preview_outrun_sunset.jpg",
+            thumbnailUrl: "\(rawBase)/outrun/a_gas_station_with_purple_lights.jpg",
             videoUrl: "\(rawBase)/outrun/a_gas_station_with_purple_lights.jpg",
             author: "Omarchy (dharmx/walls)"
         ),
@@ -187,19 +187,19 @@ public struct CuratedCatalog {
             category: "Outrun",
             resolution: "Retina HD (0% CPU)",
             fileSizeMB: 2.3,
-            thumbnailUrl: "preview_outrun_sunset.jpg",
+            thumbnailUrl: "\(rawBase)/outrun/a_street_with_buildings_and_signs.png",
             videoUrl: "\(rawBase)/outrun/a_street_with_buildings_and_signs.png",
             author: "Omarchy (dharmx/walls)"
         ),
 
-        // MARK: - Omarchy Nord & Gruvbox Themes
+        // MARK: - Omarchy Nord & Gruvbox Themes (Unique Image Thumbnails)
         WallpaperItem(
             id: UUID(uuidString: "c1111111-0000-0000-0000-000000000001")!,
             title: "Nordic Mountain Valley",
             category: "Nord",
             resolution: "Retina HD (0% CPU)",
             fileSizeMB: 1.8,
-            thumbnailUrl: "preview_waves_monochrome.jpg",
+            thumbnailUrl: "\(rawBase)/nord/a_view_of_a_valley_with_mountains_in_the_background.png",
             videoUrl: "\(rawBase)/nord/a_view_of_a_valley_with_mountains_in_the_background.png",
             author: "Omarchy (dharmx/walls)"
         ),
@@ -209,7 +209,7 @@ public struct CuratedCatalog {
             category: "Gruvbox",
             resolution: "Retina HD (0% CPU)",
             fileSizeMB: 1.8,
-            thumbnailUrl: "preview_totoro.jpg",
+            thumbnailUrl: "\(rawBase)/gruvbox/a_bench_in_a_bamboo_forest.png",
             videoUrl: "\(rawBase)/gruvbox/a_bench_in_a_bamboo_forest.png",
             author: "Omarchy (dharmx/walls)"
         ),
@@ -219,19 +219,19 @@ public struct CuratedCatalog {
             category: "Nord",
             resolution: "Retina HD (0% CPU)",
             fileSizeMB: 0.5,
-            thumbnailUrl: "preview_waves_monochrome.jpg",
+            thumbnailUrl: "\(rawBase)/nord/a_body_of_water_with_a_bridge_and_trees.jpg",
             videoUrl: "\(rawBase)/nord/a_body_of_water_with_a_bridge_and_trees.jpg",
             author: "Omarchy (dharmx/walls)"
         ),
 
-        // MARK: - Omarchy Nature & Minimal Themes
+        // MARK: - Omarchy Nature & Minimal Themes (Unique Image Thumbnails)
         WallpaperItem(
             id: UUID(uuidString: "d1111111-0000-0000-0000-000000000001")!,
             title: "Palm Beach Full Moon",
             category: "Nature",
             resolution: "Retina 4K (0% CPU)",
             fileSizeMB: 10.8,
-            thumbnailUrl: "preview_outrun_sunset.jpg",
+            thumbnailUrl: "\(rawBase)/nature/a_beach_with_palm_trees_and_a_moon.png",
             videoUrl: "\(rawBase)/nature/a_beach_with_palm_trees_and_a_moon.png",
             author: "Omarchy (dharmx/walls)"
         ),
@@ -241,7 +241,7 @@ public struct CuratedCatalog {
             category: "Nature",
             resolution: "Retina HD (0% CPU)",
             fileSizeMB: 1.8,
-            thumbnailUrl: "preview_totoro.jpg",
+            thumbnailUrl: "\(rawBase)/nature/a_bench_in_a_bamboo_forest.png",
             videoUrl: "\(rawBase)/nature/a_bench_in_a_bamboo_forest.png",
             author: "Omarchy (dharmx/walls)"
         ),
@@ -251,7 +251,7 @@ public struct CuratedCatalog {
             category: "Minimal",
             resolution: "Retina HD (0% CPU)",
             fileSizeMB: 0.2,
-            thumbnailUrl: "preview_waves_monochrome.jpg",
+            thumbnailUrl: "\(rawBase)/minimal/a_black_and_white_diagram_of_a_tree_of_life.jpg",
             videoUrl: "\(rawBase)/minimal/a_black_and_white_diagram_of_a_tree_of_life.jpg",
             author: "Omarchy (dharmx/walls)"
         ),
@@ -286,36 +286,6 @@ public struct CuratedCatalog {
             thumbnailUrl: "preview_sakura_blade.jpg",
             videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
             author: "NeoShinjuku"
-        ),
-        WallpaperItem(
-            id: UUID(uuidString: "44444444-4444-4444-4444-444444444444")!,
-            title: "Earth Orbit Horizon",
-            category: "Nature",
-            resolution: "4K (H.264 Accelerated)",
-            fileSizeMB: 14.8,
-            thumbnailUrl: "preview_celestial_veil.jpg",
-            videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4",
-            author: "Orbital Spaceflight"
-        ),
-        WallpaperItem(
-            id: UUID(uuidString: "55555555-5555-5555-5555-555555555555")!,
-            title: "Lo-Fi Rainy Window",
-            category: "Anime",
-            resolution: "1080p (Ultra Quiet)",
-            fileSizeMB: 5.7,
-            thumbnailUrl: "preview_lofi_headphones.jpg",
-            videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4",
-            author: "Chilled Beats"
-        ),
-        WallpaperItem(
-            id: UUID(uuidString: "66666666-6666-6666-6666-666666666666")!,
-            title: "Minimalist Gradient Waves",
-            category: "Minimal",
-            resolution: "1080p (Fluid)",
-            fileSizeMB: 4.1,
-            thumbnailUrl: "preview_waves_monochrome.jpg",
-            videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackSeeTheWorld.mp4",
-            author: "Aesthetic Studio"
         )
     ]
 }

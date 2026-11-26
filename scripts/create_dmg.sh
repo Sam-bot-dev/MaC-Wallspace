@@ -32,65 +32,15 @@ mkdir -p "$STAGING_DIR/.background"
 cp -R "$APP_BUNDLE" "$STAGING_DIR/"
 ln -s /Applications "$STAGING_DIR/Applications"
 
-# 2. Add Background Artwork
-if [ -f "$ROOT_DIR/Resources/icon_assets/dmg_background.png" ]; then
+# 2. Generate and Add Obsidian Black Background Artwork
+if [ -f "$ROOT_DIR/scripts/composite_dmg_background.py" ]; then
+    echo "==> Generating sleek Obsidian Black DMG background..."
+    /Users/sammy/Desktop/Code/venv/bin/python3 "$ROOT_DIR/scripts/composite_dmg_background.py" "$STAGING_DIR/.background/background.png" 2>/dev/null || true
+fi
+
+if [ ! -f "$STAGING_DIR/.background/background.png" ] && [ -f "$ROOT_DIR/Resources/icon_assets/dmg_background.png" ]; then
     cp "$ROOT_DIR/Resources/icon_assets/dmg_background.png" "$STAGING_DIR/.background/background.png"
 fi
-
-# 3. Add 1-Click Gatekeeper Fixer & Launcher
-cat << 'EOF' > "$STAGING_DIR/Fix Gatekeeper & Open.command"
-#!/usr/bin/env bash
-# MaC Wallspace - 1-Click Gatekeeper Unblocker & Launcher
-clear
-echo "=========================================================="
-echo "  MaC Wallspace — Security Permission Setup"
-echo "=========================================================="
-echo ""
-
-DIR="$(cd "$(dirname "$0")" && pwd)"
-TARGET="/Applications/Mac Wallspace.app"
-
-if [ ! -d "$TARGET" ]; then
-    TARGET="$DIR/Mac Wallspace.app"
-fi
-
-echo "==> Removing macOS download quarantine attribute..."
-xattr -cr "$TARGET" 2>/dev/null || true
-codesign --force --deep --sign - "$TARGET" 2>/dev/null || true
-
-echo "✓ Gatekeeper check unblocked successfully!"
-echo "==> Launching MaC Wallspace..."
-open "$TARGET"
-
-echo ""
-echo "Done! You can close this terminal window."
-exit 0
-EOF
-chmod +x "$STAGING_DIR/Fix Gatekeeper & Open.command"
-
-# 4. Add Quick Help Instructions
-cat << 'EOF' > "$STAGING_DIR/FIRST LAUNCH HELP.txt"
-===========================================================
-  MaC Wallspace — How to Open if Gatekeeper Warns You
-===========================================================
-
-Because MaC Wallspace is a community open-source project 
-built for older Macs, macOS may show a warning:
-"Apple cannot check it for malicious software"
-
-HOW TO OPEN (Choose either method):
-
-METHOD 1 (Recommended):
-  1. Drag "Mac Wallspace" to "Applications".
-  2. In Applications, Right-Click (or Control-Click) "Mac Wallspace".
-  3. Select "Open" from the menu.
-  4. Click "Open" in the prompt.
-  * You only need to do this ONCE! After that, it opens with a normal double-click.
-
-METHOD 2 (1-Click Fix):
-  Double-click "Fix Gatekeeper & Open.command" right here in this DMG!
-===========================================================
-EOF
 
 # 5. Create temporary writable DMG
 TMP_DMG="/tmp/tmp_macwallspace.dmg"
@@ -141,10 +91,8 @@ if [ -n "$MOUNT_DIR" ] && [ -d "$MOUNT_DIR" ]; then
                 set background picture of theViewOptions to file ".background:background.png"
             end try
             
-            set position of item "$APP_NAME.app" of container window to {160, 195}
-            set position of item "Applications" of container window to {500, 195}
-            set position of item "Fix Gatekeeper & Open.command" of container window to {240, 310}
-            set position of item "FIRST LAUNCH HELP.txt" of container window to {420, 310}
+            set position of item "$APP_NAME.app" of container window to {160, 205}
+            set position of item "Applications" of container window to {500, 205}
             
             update without registering applications
             delay 1
