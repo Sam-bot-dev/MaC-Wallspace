@@ -67,9 +67,37 @@ public struct WallpaperCardView: View {
     }
     
     private var thumbnailImage: NSImage? {
-        if let path = item.thumbnailUrl, FileManager.default.fileExists(atPath: path) {
+        guard let path = item.thumbnailUrl else { return nil }
+        
+        // 1. Direct path or file exists
+        if FileManager.default.fileExists(atPath: path) {
             return NSImage(contentsOfFile: path)
         }
+        
+        // 2. Bundled resource (previews/)
+        if let bundleURL = Bundle.main.resourceURL {
+            let inPreviews = bundleURL.appendingPathComponent("previews/\(path)").path
+            if FileManager.default.fileExists(atPath: inPreviews) {
+                return NSImage(contentsOfFile: inPreviews)
+            }
+            let direct = bundleURL.appendingPathComponent(path).path
+            if FileManager.default.fileExists(atPath: direct) {
+                return NSImage(contentsOfFile: direct)
+            }
+        }
+        
+        // 3. Application Support / Thumbnails
+        let inThumbnails = WallpaperStore.thumbnailsDirectory.appendingPathComponent(path).path
+        if FileManager.default.fileExists(atPath: inThumbnails) {
+            return NSImage(contentsOfFile: inThumbnails)
+        }
+        
+        // 4. Fallback dev docs preview
+        let devFallback = "/Users/sammy/Desktop/Code/MaC-Wallspace/docs/previews/\(path)"
+        if FileManager.default.fileExists(atPath: devFallback) {
+            return NSImage(contentsOfFile: devFallback)
+        }
+        
         return nil
     }
     

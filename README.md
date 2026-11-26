@@ -251,7 +251,14 @@ One of the biggest flaws with third-party wallpaper engines (especially Chromium
 1. Download the latest release `.dmg` from the [**Releases Page**](https://github.com/Sam-bot-dev/MaC-Wallspace/releases).
 2. Open `Mac-Wallspace-v1.1.0.dmg`.
 3. Drag **Mac Wallspace** into your `Applications` folder.
-4. Launch the app — it opens the gallery window and lives quietly in your menu bar!
+
+### How to Open on First Launch (macOS Gatekeeper Bypass)
+Because MaC Wallspace is a community open-source project without a paid corporate Apple Developer ID, macOS requires you to approve it on the very first launch:
+1. Open **Finder** and go to your **Applications** folder.
+2. **Right-Click** (or hold `Control` and click) **Mac Wallspace**.
+3. Click **Open** from the popup menu.
+4. When the macOS security prompt appears, click **Open** again (you press "Open" twice).
+*(You only ever have to do this once. After the first time, you can double-click it normally forever).*
 
 ### How to Uninstall
 You can uninstall easily at any time:

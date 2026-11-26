@@ -358,8 +358,18 @@ public struct MainGalleryView: View {
             return store.wallpapers
         } else if settings.selectedCategory == "Omarchy" {
             return store.wallpapers.filter { $0.author?.contains("Omarchy") == true || $0.localFileName?.contains("omarchy") == true }
+        } else if settings.selectedCategory == "Animated (Live)" {
+            return store.wallpapers.filter { $0.videoUrl.hasSuffix(".mp4") || $0.videoUrl.hasSuffix(".mov") || $0.videoUrl.hasSuffix(".gif") }
+        } else if settings.selectedCategory == "Photos" {
+            return store.wallpapers.filter { $0.videoUrl.hasSuffix(".jpg") || $0.videoUrl.hasSuffix(".jpeg") || $0.videoUrl.hasSuffix(".png") || $0.videoUrl.hasSuffix(".heic") || $0.videoUrl.hasSuffix(".webp") }
+        } else if settings.selectedCategory == "Custom" {
+            return store.wallpapers.filter { $0.isCustom }
+        } else if settings.selectedCategory == "Anime" {
+            return store.wallpapers.filter { $0.category.contains("Anime") }
+        } else if settings.selectedCategory == "Minimal" {
+            return store.wallpapers.filter { $0.category.contains("Minimal") }
         } else {
-            return store.wallpapers.filter { $0.category == settings.selectedCategory }
+            return store.wallpapers.filter { $0.category == settings.selectedCategory || $0.category.localizedCaseInsensitiveContains(settings.selectedCategory) }
         }
     }
 }

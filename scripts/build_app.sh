@@ -65,6 +65,13 @@ if [ -f "$ROOT_DIR/Resources/AppIcon.icns" ]; then
     cp "$ROOT_DIR/Resources/AppIcon.icns" "$RESOURCES_DIR/AppIcon.icns"
 fi
 
+# Copy preview thumbnails
+if [ -d "$ROOT_DIR/docs/previews" ]; then
+    echo "==> Embedding preview thumbnails..."
+    mkdir -p "$RESOURCES_DIR/previews"
+    cp -R "$ROOT_DIR/docs/previews/" "$RESOURCES_DIR/previews/"
+fi
+
 # Copy bundled anime wallpaper artwork
 if [ -f "$ROOT_DIR/Resources/icon_assets/anime_wallpaper.jpg" ]; then
     echo "==> Embedding anime_wallpaper.jpg..."
